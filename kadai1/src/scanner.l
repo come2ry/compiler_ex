@@ -22,7 +22,7 @@ typedef union {
 token yylval; 
  
 %}
-%option yylineno                  /*行番号を保持する変数*/
+%option yylineno
 %%
 
 begin           return SBEGIN;
