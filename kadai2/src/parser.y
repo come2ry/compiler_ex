@@ -19,15 +19,15 @@
 %token PROGRAM READ THEN TO VAR
 %token WHILE WRITE
 
-%left PLUS MINUS                       ← 注意
-%left MULT DIV                         ← 注意
+%left PLUS MINUS                       // ← 注意
+%left MULT DIV                         // ← 注意
 
 %token EQ NEQ LE LT GE GT
 %token LPAREN RPAREN LBRACKET RBRACKET
 %token COMMA SEMICOLON COLON INTERVAL
 %token PERIOD ASSIGN
-%token <num> NUMBER                    ← yylval の型を指定
-%token <ident> IDENT                   ← yylval の型を指定
+%token <num> NUMBER                    // ← yylval の型を指定
+%token <ident> IDENT                   // ← yylval の型を指定
 
 %%
 
@@ -46,7 +46,7 @@ var_decl_part
 
 var_decl_list
         : var_decl_list SEMICOLON var_decl
-        | var decl
+        | var_decl
         ;
 
 var_decl
@@ -54,6 +54,11 @@ var_decl
         ;
 
 subprog_decl_part
+        : subprog_decl_list SEMICOLON
+        | /* empty */
+        ;
+
+subprog_decl_list
         : subprog_decl_list SEMICOLON subprog_decl
         | subprog_decl
         ;
@@ -117,11 +122,11 @@ proc_call_statement
         ;
 
 proc_call_name
-        : ‘IDENT’
+        : IDENT
         ;
 
 block_statement
-        : BEGIN statement_list END
+        : SBEGIN statement_list SEND
         ;
 
 read_statement
@@ -179,139 +184,6 @@ id_list
         | id_list COMMA IDENT
         ;
 
-
-
-
-⟨subprog decl part⟩
-⟨subprog decl list⟩
-⟨subprog decl⟩
-⟨proc decl⟩
-::=
-::=
-⟨subprog decl list⟩ ‘;’
-/* empty */
-⟨subprog decl list⟩ ‘;’ ⟨subprog decl⟩
-⟨subprog decl⟩
-⟨proc decl⟩
-‘procedure’ ⟨proc name⟩ ‘;’ ⟨inblock⟩
-::=
-‘IDENT’
-⟨var decl part⟩ ⟨statement⟩
-⟨statement list⟩
-⟨statement⟩
-::=
-|
-::=
-⟨proc name⟩
-⟨inblock⟩
-::=
-|
-::=
-|
-|
-|
-|
-|
-|
-|
-|
-::=
-|
-⟨statement list⟩ ‘;’ ⟨statement⟩
-⟨statement⟩
-⟨assignment statement⟩
-⟨if statement⟩
-⟨while statement⟩
-⟨f or statement⟩
-⟨proc call statement⟩
-⟨null statement⟩
-⟨block statement⟩
-⟨read statement⟩
-⟨write statement⟩
-37⟨assignment statement⟩
-⟨if statement⟩
-::=
-‘IDENT’ ‘:=’ ⟨expression⟩
-::=‘if’ ⟨condition⟩ ‘then’ ⟨statement⟩ ⟨else statement⟩
-⟨else statement⟩
-::=
-|
-⟨while statement⟩
-⟨f or statement⟩
-::=
-::=
-⟨proc call statement⟩
-⟨proc call name⟩
-::=
-‘else’ ⟨statement⟩
-/* empty */
-‘while’ ⟨condition⟩ ‘do’ ⟨statement⟩
-‘for’ ‘IDENT’ ‘:=’ ⟨expression⟩
-‘to’ ⟨expression⟩ ‘do’ ⟨statement⟩
-::=
-⟨proc call name⟩
-‘IDENT’
-⟨block statement⟩ ::= ‘begin’ ⟨statement list⟩ ‘end’
-⟨read statement⟩ ::= ‘read’ ‘(’ ‘IDENT’ ‘)’
-⟨write statement⟩
-::=
-‘write’ ‘(’ ⟨expression⟩ ‘)’
-⟨null statement⟩ ::=
-⟨condition⟩ ⟨expression⟩
-⟨expression⟩
-⟨expression⟩
-⟨expression⟩
-⟨expression⟩
-⟨expression⟩
-::=
-|
-|
-|
-|
-|
-/* empty */
-‘=’ ⟨expression⟩
-‘<>’ ⟨expression⟩
-‘<’ ⟨expression⟩
-‘<=’ ⟨expression⟩
-‘>’ ⟨expression⟩
-‘>=’ ⟨expression⟩
-⟨expression⟩ ::=
-|
-|
-|
-|
-⟨term⟩ ⟨f actor⟩
-⟨term⟩ ‘*’ ⟨f actor⟩
-⟨term⟩ ‘div’ ⟨f actor⟩
-::=
-|
-|
-⟨f actor⟩
-⟨arg list⟩
-⟨var name⟩
-‘NUMBER’
-‘(’ ⟨expression⟩ ‘)’
-::=
-|
-|
-⟨var name⟩
-⟨term⟩
-‘+’ ⟨term⟩
-‘-’ ⟨term⟩
-⟨expression⟩ ‘+’ ⟨term⟩
-⟨expression⟩ ‘-’ ⟨term⟩
-::=
-::=
-|
-‘IDENT’
-⟨expression⟩
-⟨arg list⟩ ‘,’ ⟨expression⟩
-38⟨id list⟩
-::=
-|
-‘IDENT’
-⟨id list⟩ ‘,’ ‘IDENT’
 
 %% 
 yyerror(char *s)
