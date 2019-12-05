@@ -6,6 +6,8 @@
 #define MAXLENGTH 16
 
 #include <stdio.h>
+extern int yylineno;
+extern char *yytext;
 
 %}
 
@@ -188,5 +190,5 @@ id_list
 %% 
 yyerror(char *s)
 {
-  fprintf(stderr, "%s\n", s);
+  fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
 }

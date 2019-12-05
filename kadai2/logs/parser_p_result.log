@@ -1,0 +1,23 @@
+[aq3795250:~/Documents/ex3/kadai2/src] yacc -d parser.y
+yacc: 2 rules never reduced
+yacc: 1 shift/reduce conflict.
+
+================================================================================================
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/pl0a.p
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/pl0b.p
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/pl0c.p
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/pl0a-err.p
+syntax error in line 6: token 'while'
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/m.p
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/array.p
+syntax error in line 2: token '['
+
+================================================================================================
+
+[aq3795250:~/Documents/ex3/kadai2/src] lex scanner.l
+[aq3795250:~/Documents/ex3/kadai2/src] cc y.tab.c lex.yy.c -ll -o parser
+[aq3795250:~/Documents/ex3/kadai2/src] ./parser ../samples/array.p
+syntax error in line 2: token '['
+
+================================================================================================
+

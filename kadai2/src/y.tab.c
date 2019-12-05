@@ -24,8 +24,10 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define MAXLENGTH 16
 
 #include <stdio.h>
+extern int yylineno;
+extern char *yytext;
 
-#line 12 "parser.y"
+#line 14 "parser.y"
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
@@ -37,7 +39,7 @@ typedef union {
     char ident[MAXLENGTH+1];
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 40 "y.tab.c"
+#line 42 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -352,13 +354,13 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 188 "parser.y"
+#line 190 "parser.y"
  
 yyerror(char *s)
 {
-  fprintf(stderr, "%s\n", s);
+  fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
 }
-#line 361 "y.tab.c"
+#line 363 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */

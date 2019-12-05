@@ -1,8 +1,14 @@
+CC = cc
+YACC = yacc -d
+
+
+all:
+	$(MAKE) yacc
+	$(MAKE) compile
+
 compile:
 	lex scanner.l
-	cc lex.yy.c -ll -o scanner
+	$(CC) y.tab.c lex.yy.c -ll -o parser
 
-test:
-	for f in {ls ../samples}; do
-		./scanner ../samples/{f}.p > ../samples_result/{f}.p.token
-	done
+yacc:
+	$(YACC) parser.y
