@@ -100,7 +100,7 @@ main(int argc, char *argv[]) {
      */
     yyin = fp;
 
-    yyparse()
+    yyparse();
 
     // /*
     //  * yylex() を呼び出すことにより，トークンが一つ切り出される．
