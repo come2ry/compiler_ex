@@ -71,11 +71,11 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON inblock
+        : PROCEDURE proc_name SEMICOLON inblock {delete(LOCAL_VAR);}
         ;
 
 proc_name
-        : IDENT
+        : IDENT {insert($1, PROC_NAME)}
         ;
 
 inblock

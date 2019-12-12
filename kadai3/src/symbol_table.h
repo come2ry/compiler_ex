@@ -19,7 +19,7 @@ struct SymbolTable
   struct SymbolTable *next;
 };
 
-// struct SymbolTable *stack_head_ptr
+// struct SymbolTable *stack_head_ptr;
 
 
 void print_rec(struct SymbolTable *rec);
