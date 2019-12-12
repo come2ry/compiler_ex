@@ -6,16 +6,9 @@
 #define MAXLENGTH 16
 
 #include <stdio.h>
+#include <symbol_table.h>
 extern int yylineno;
 extern char *yytext;
-
-/* 記号表の管理 + 変数・定数の区別用 */
-typedef enum {
-    GLOBAL_VAR, /* 大域変数 */
-    LOCAL_VAR, /* 局所変数 */
-    PROC_NAME, /* 手続き */
-    CONSTANT /* 定数 */
-} Scope;
 
 %}
 
@@ -190,8 +183,8 @@ arg_list
         ;
 
 id_list
-        : IDENT
-        | id_list COMMA IDENT
+        : IDENT ｛insert_data($1, flag);}
+        | id_list COMMA IDENT{insert_data(%3, flag);}
         ;
 
 
@@ -200,9 +193,3 @@ yyerror(char *s)
 {
 	fprintf(sterr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
 }
-
-// %%
-// yyaddsymbol()
-// {
-// 	fprintf(sterr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
-// }
