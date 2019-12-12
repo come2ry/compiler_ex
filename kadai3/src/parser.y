@@ -37,7 +37,7 @@ Scope flag = GLOBAL_VAR;
 %%
 
 program
-        : PROGRAM IDENT SEMICOLON outblock PERIOD
+        : PROGRAM IDENT SEMICOLON outblock PERIOD {printf("[program end.]\n"); print_all();}
         ;
 
 outblock
@@ -73,7 +73,7 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON inblock {delete(LOCAL_VAR);}
+        : PROCEDURE proc_name SEMICOLON inblock {printf("[proc_decl]\n"); delete(); flag = GLOBAL_VAR;}
         ;
 
 proc_name
@@ -102,7 +102,7 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN {printf("assignment_statement %s %d\n", $1, flag);} {lookup($1, flag);} expression
+        : IDENT ASSIGN {printf("[assignment_statement %s %d]\n", $1, flag); lookup($1, flag);} expression
         ;
 
 if_statement
@@ -119,7 +119,7 @@ while_statement
         ;
 
 for_statement
-        : FOR IDENT {printf("for_statement %s %d\n", $2, flag);} {lookup($2, flag);} ASSIGN expression TO expression DO statement
+        : FOR IDENT {printf("[for_statement %s %d]\n", $2, flag); lookup($2, flag);} ASSIGN expression TO expression DO statement
         ;
 
 proc_call_statement
@@ -127,15 +127,15 @@ proc_call_statement
         ;
 
 proc_call_name
-        : IDENT {printf("proc_call_name %s %d\n", $1, flag);} {lookup($1, flag);}
+        : IDENT {printf("[proc_call_name %s %d]\n", $1, flag); lookup($1, flag);}
         ;
 
 block_statement
-        : SBEGIN statement_list SEND {flag = GLOBAL_VAR; delete(LOCAL_VAR);}
+        : SBEGIN statement_list SEND
         ;
 
 read_statement
-        : READ LPAREN IDENT RPAREN {printf("read_statement %s %d\n", $3, flag); lookup($3, flag);}
+        : READ LPAREN IDENT RPAREN {printf("[read_statement %s %d]\n", $3, flag); lookup($3, flag);}
         ;
 
 write_statement
@@ -176,7 +176,7 @@ factor
         ;
 
 var_name
-        : IDENT {printf("var_name %s %d\n", $1, flag); lookup($1, flag);}
+        : IDENT {printf("[var_name %s %d]\n", $1, flag); lookup($1, flag);}
         ;
 
 arg_list

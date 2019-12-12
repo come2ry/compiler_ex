@@ -19,11 +19,11 @@ struct SymbolTable
   struct SymbolTable *next;
 };
 
-// struct SymbolTable *stack_head_ptr;
-
+struct SymbolTable *stack_head_ptr;
+struct SymbolTable *stack_tail_ptr;
 
 void print_rec(struct SymbolTable *rec);
 void print_all();
 struct SymbolTable *lookup(char *name, Scope kind);
-void delete(Scope kind);
+void delete();
 void insert(char *name, Scope kind);
