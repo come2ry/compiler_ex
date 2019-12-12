@@ -6,9 +6,11 @@
 #define MAXLENGTH 16
 
 #include <stdio.h>
-#include <symbol_table.h>
+#include "symbol_table.h"
 extern int yylineno;
 extern char *yytext;
+
+Scope flag = GLOBAL_VAR;
 
 %}
 
@@ -44,7 +46,7 @@ outblock
 
 var_decl_part
         : /* empty */
-        | var_decl_list SEMICOLON
+        | var_decl_list SEMICOLON {flag = LOCAL_VAR;}
         ;
 
 var_decl_list
@@ -75,7 +77,7 @@ proc_decl
         ;
 
 proc_name
-        : IDENT {insert($1, PROC_NAME)}
+        : IDENT {insert($1, PROC_NAME);}
         ;
 
 inblock
@@ -100,7 +102,7 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN expression
+        : IDENT ASSIGN {printf("assignment_statement %s %d\n", $1, flag);} {lookup($1, flag);} expression
         ;
 
 if_statement
@@ -117,7 +119,7 @@ while_statement
         ;
 
 for_statement
-        : FOR IDENT ASSIGN expression TO expression DO statement
+        : FOR IDENT {printf("for_statement %s %d\n", $2, flag);} {lookup($2, flag);} ASSIGN expression TO expression DO statement
         ;
 
 proc_call_statement
@@ -125,15 +127,15 @@ proc_call_statement
         ;
 
 proc_call_name
-        : IDENT
+        : IDENT {printf("proc_call_name %s %d\n", $1, flag);} {lookup($1, flag);}
         ;
 
 block_statement
-        : SBEGIN statement_list SEND
+        : SBEGIN statement_list SEND {flag = GLOBAL_VAR; delete(LOCAL_VAR);}
         ;
 
 read_statement
-        : READ LPAREN IDENT RPAREN
+        : READ LPAREN IDENT RPAREN {printf("read_statement %s %d\n", $3, flag); lookup($3, flag);}
         ;
 
 write_statement
@@ -174,7 +176,7 @@ factor
         ;
 
 var_name
-        : IDENT
+        : IDENT {printf("var_name %s %d\n", $1, flag); lookup($1, flag);}
         ;
 
 arg_list
@@ -183,13 +185,13 @@ arg_list
         ;
 
 id_list
-        : IDENT ｛insert_data($1, flag);}
-        | id_list COMMA IDENT{insert_data(%3, flag);}
+        : IDENT {insert($1, flag);}
+        | id_list COMMA IDENT{insert($3, flag);}
         ;
 
 
 %%
 yyerror(char *s)
 {
-	fprintf(sterr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
+	fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
 }

@@ -80,7 +80,7 @@ void insert(char *name, Scope kind)
     addr++; //先頭アドレスをインクリメント
 
     printf("<insert>\n");
-    prin_all();
+    print_all();
     printf("</insert>\n");
 }
 
