@@ -85,23 +85,23 @@ void insert(char *name, Scope kind)
     printf("\n↓\n↓\n\n");
 }
 
-//変数を検索して、すでに登録してあればその構造体のアドレスを返す
-struct SymbolTable *lookup(char *name, Scope kind)
+//変数を記号表から検索して見つかれば構造体のアドレスを返す
+struct SymbolTable *lookup(char *name)
 {
-    struct SymbolTable *rec;
-
-    rec = stack_head_ptr;
+    struct SymbolTable *rec, *tmp;
+    tmp = NULL;
+    
     for (rec = stack_head_ptr; rec != NULL; rec = rec->next)
     {
         if (strcmp(rec->name, name) == 0)
-            break;
+            tmp = rec;
     }
 
     printf("lookup:\n");
-    print_rec(rec);
+    print_rec(tmp);
     printf("\n↓\n↓\n\n");
-    // 見つからなかった場合はrecにNULLが入っている
-    return rec;
+    // 見つからなかった場合はtmpにNULLが入っている
+    return tmp;
 }
 
 void delete()
