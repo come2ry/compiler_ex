@@ -32,7 +32,7 @@ void print_rec(struct SymbolTable *rec)
         //     break;
 
         default:
-            printf("%s    %u    !INVALID_INPUT!\n", rec->name, rec->addr);
+            printf("    %s %u !INVALID_INPUT!\n", rec->name, rec->addr);
             break;
         }
     }
