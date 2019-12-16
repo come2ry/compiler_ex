@@ -4,7 +4,6 @@
 
 struct SymbolTable *stack_head_ptr = NULL;
 struct SymbolTable *stack_tail_ptr;
-// *stack_head_ptr = NULL;
 
 
 void print_rec(struct SymbolTable *rec)
@@ -90,7 +89,7 @@ struct SymbolTable *lookup(char *name)
 {
     struct SymbolTable *rec, *tmp;
     tmp = NULL;
-    
+
     for (rec = stack_head_ptr; rec != NULL; rec = rec->next)
     {
         if (strcmp(rec->name, name) == 0)
@@ -131,13 +130,6 @@ void delete()
             free(tmp2);
         }
         tmp->next = NULL;
-        // rec = tmp->next;
-        // tmp->next = NULL;
-        // while(rec != NULL){
-        //     tmp = rec;
-        //     rec = rec->next;
-        //     free(tmp);
-        // }
     }
 
     printf("delete complete:\n");

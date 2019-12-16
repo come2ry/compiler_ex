@@ -1,72 +1,72 @@
 insert:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 insert:
-    n 0 GLOBAL 
-    sum 1 GLOBAL 
+    n 0 GLOBAL
+    sum 1 GLOBAL
 
 ↓
 ↓
 
 [assignment_statement n 1]
 lookup:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 [assignment_statement sum 1]
 lookup:
-    sum 1 GLOBAL 
+    sum 1 GLOBAL
 
 ↓
 ↓
 
 [var_name n 1]
 lookup:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 [assignment_statement sum 1]
 lookup:
-    sum 1 GLOBAL 
+    sum 1 GLOBAL
 
 ↓
 ↓
 
 [var_name sum 1]
 lookup:
-    sum 1 GLOBAL 
+    sum 1 GLOBAL
 
 ↓
 ↓
 
 [var_name n 1]
 lookup:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 [assignment_statement n 1]
 lookup:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 [var_name n 1]
 lookup:
-    n 0 GLOBAL 
+    n 0 GLOBAL
 
 ↓
 ↓
 
 [program end.]
-    n 0 GLOBAL 
-    sum 1 GLOBAL 
+    n 0 GLOBAL
+    sum 1 GLOBAL
