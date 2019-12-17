@@ -11,17 +11,6 @@
 #define MAXLENGTH 16
 #include "y.tab.h"
 
-// typedef union {
-//     int num;
-//     char ident[MAXLENGTH+1];
-// } token;
-
-/*
- * yylval という変数名にするのは，yacc との融合時にプログラムの変更を
- * 最小限にするためである．
- */
-// token yylval;
-
 %}
 %option yylineno
 %%
