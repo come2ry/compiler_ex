@@ -59,6 +59,7 @@ write           return WRITE;
 ","             return COMMA;
 ";"             return SEMICOLON;
 ":"             return COLON;
+".."            return INTERVAL;
 "."             return PERIOD;
 ":="            return ASSIGN;
 
