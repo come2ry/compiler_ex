@@ -2,13 +2,11 @@ CC = cc
 YACC = yacc -d
 
 
-all:
-	$(MAKE) yacc
-	$(MAKE) compile
-
-compile:
-	lex scanner.l
+compile: y.tab.c lex.yy.c
 	$(CC) y.tab.c lex.yy.c -ll -o parser
 
-yacc:
+lex.yy.c: scanner.l
+	lex scanner.l
+
+y.tab.c: parser.y
 	$(YACC) parser.y
