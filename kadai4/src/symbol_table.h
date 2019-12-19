@@ -13,10 +13,10 @@ typedef enum {
 
 struct SymbolTable
 {
-	char *name;
-	unsigned int addr;
-	Scope kind;
-	struct SymbolTable *next;
+  char *name;
+  unsigned int addr;
+  Scope kind;
+  struct SymbolTable *next;
 };
 
 struct SymbolTable *stack_head_ptr;

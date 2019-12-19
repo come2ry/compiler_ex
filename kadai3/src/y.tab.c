@@ -595,23 +595,23 @@ case 14:
 break;
 case 27:
 #line 105 "parser.y"
-	{printf("[assignment_statement %s %d]\n", yystack.l_mark[-1].ident, flag); lookup(yystack.l_mark[-1].ident, flag);}
+	{printf("[assignment_statement %s %d]\n", yystack.l_mark[-1].ident, flag); lookup(yystack.l_mark[-1].ident);}
 break;
 case 33:
 #line 122 "parser.y"
-	{printf("[for_statement %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident, flag);}
+	{printf("[for_statement %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident);}
 break;
 case 36:
 #line 130 "parser.y"
-	{printf("[proc_call_name %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident, flag);}
+	{printf("[proc_call_name %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident);}
 break;
 case 38:
 #line 138 "parser.y"
-	{printf("[read_statement %s %d]\n", yystack.l_mark[-1].ident, flag); lookup(yystack.l_mark[-1].ident, flag);}
+	{printf("[read_statement %s %d]\n", yystack.l_mark[-1].ident, flag); lookup(yystack.l_mark[-1].ident);}
 break;
 case 58:
 #line 179 "parser.y"
-	{printf("[var_name %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident, flag);}
+	{printf("[var_name %s %d]\n", yystack.l_mark[0].ident, flag); lookup(yystack.l_mark[0].ident);}
 break;
 case 61:
 #line 188 "parser.y"

@@ -117,7 +117,7 @@ static const short yylhs[] = {                           -1,
     4,    4,    4,    4,    4,    4,   14,   15,   25,   25,
    16,   17,   18,   26,   20,   21,   22,   19,   24,   24,
    24,   24,   24,   24,   23,   23,   23,   23,   23,   27,
-   27,   27,   28,   28,   28,   29,   30,   30,    7,    7,
+   27,   27,   28,   28,   28,   29,    7,    7,
 };
 static const short yylen[] = {                            2,
     5,    3,    0,    2,    3,    1,    2,    2,    0,    3,
@@ -125,14 +125,14 @@ static const short yylen[] = {                            2,
     1,    1,    1,    1,    1,    1,    3,    5,    2,    0,
     4,    8,    1,    1,    3,    4,    4,    0,    3,    3,
     3,    3,    3,    3,    1,    2,    2,    3,    3,    1,
-    3,    3,    1,    1,    3,    1,    1,    3,    1,    3,
+    3,    3,    1,    1,    3,    1,    1,    3,
 };
 static const short yydefred[] = {                         0,
-    0,    0,    0,    0,    0,    0,    0,    0,    6,   59,
+    0,    0,    0,    0,    0,    0,    0,    0,    6,   57,
     0,    1,    0,    0,    0,   11,   12,    0,    0,   14,
     0,    0,    0,    0,    0,    0,    0,    0,    2,   18,
    19,   20,   21,   22,   23,   24,   25,   26,   33,    0,
-    5,   60,    0,   17,    0,    0,    0,    0,    0,   54,
+    5,   58,    0,   17,    0,    0,    0,    0,    0,   54,
    56,    0,    0,    0,   50,   53,    0,    0,    0,    0,
    10,    0,   13,   35,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -143,7 +143,7 @@ static const short yydefred[] = {                         0,
 static const short yydgoto[] = {                          2,
     6,    7,   14,   29,    8,    9,   11,   15,   16,   17,
    21,   63,   45,   30,   31,   32,   33,   34,   35,   36,
-   37,   38,   52,   53,  105,   39,   54,   55,   56,    0,
+   37,   38,   52,   53,  105,   39,   54,   55,   56,
 };
 static const short yysindex[] = {                      -263,
  -286,    0, -278, -223, -262, -242, -202, -222,    0,    0,
@@ -174,7 +174,7 @@ static const short yyrindex[] = {                         0,
 static const short yygindex[] = {                         0,
     0,  142,    0,  -22,    0,  178,    0,    0,  162,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,  -48,  177,    0,    0,  109,   96,    0,    0,
+    0,    0,  -48,  177,    0,    0,  109,   96,    0,
 };
 #define YYTABLESIZE 265
 static const short yytable[] = {                         44,
@@ -313,8 +313,6 @@ static const char *yyrule[] = {
 "factor : NUMBER",
 "factor : LPAREN expression RPAREN",
 "var_name : IDENT",
-"arg_list : expression",
-"arg_list : arg_list COMMA expression",
 "id_list : IDENT",
 "id_list : id_list COMMA IDENT",
 
@@ -360,7 +358,7 @@ yyerror(char *s)
 {
   fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
 }
-#line 363 "y.tab.c"
+#line 361 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
