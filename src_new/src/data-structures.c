@@ -91,14 +91,14 @@ void init_fstack(){ /* fstackの初期化 */
   return;
 }
 
-Factor fuctorpop() {
+Factor factorpop() {
   Factor tmp;
   tmp = fstack.element[fstack.top];
   fstack.top --;
   return tmp;
 }
 
-void fuctorpush(Factor x) {
+void factorpush(Factor x) {
   fstack.top ++;
   fstack.element[fstack.top] = x;
   return;
