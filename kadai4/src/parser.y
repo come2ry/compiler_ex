@@ -63,6 +63,9 @@ outblock
 var_decl_part
         : /* empty */
         | var_decl_list SEMICOLON
+		{
+			displayGlobalVar();
+		}
         ;
 
 var_decl_list
@@ -260,7 +263,7 @@ id_list
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
 				insertCode(Alloca);
-			};
+			}
 		}
         | id_list COMMA IDENT
 		{

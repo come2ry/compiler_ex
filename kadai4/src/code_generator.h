@@ -153,5 +153,6 @@ void displayLlvmcodes(LLVMcode *code);
 void displayLlvmfundecl(Fundecl *decl);
 void insertDecl(char *fname, unsigned arity, Factor *args);
 Factor generateFactor(char *name);
+void displayGlobalVar();
 
 #endif

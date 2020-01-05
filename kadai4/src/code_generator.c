@@ -52,15 +52,6 @@ void insertCode(LLVMcommand command) {
     Factor arg1, arg2, arg3, retval, l, type; /* 結果 */
 
     switch( command ){
-        // case Common:
-        //     // @n = common global i32 0, align 4
-        //     Factor arg1, retval;
-        //     arg1 = factorpop();
-        //     retval = factorpop();
-        //     (tmp->args).load.arg1 = arg1;
-        //     (tmp->args).load.retval = retval;
-        //     factorpush( retval );
-        //     break;
         case Alloca:
             retval.type = LOCAL_VAR;   /* 結果を格納するレジスタは局所 */
             retval.val = cntr;         /* 新規のレジスタ番号を取得 */
@@ -360,4 +351,16 @@ Factor generateFactor(char *name)
     strcpy(f.vname, rec->name);
     f.val = NULL;
     return f;
+}
+
+void displayGlobalVar(){
+    struct SymbolTable *rec;
+
+    for (rec = stack_head_ptr; rec != NULL; rec = rec->next)
+    {
+        if (rec->kind != GLOBAL_VAR)
+            break;
+
+        printf("@%s = common global i32 0, align 4\n", rec->name);
+    }
 }
