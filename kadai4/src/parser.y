@@ -52,7 +52,7 @@ outblock
         {
 			insertDecl("main", 0, NULL);
 			Factor f;
-			f.type = CONSTANT
+			f.type = CONSTANT;
 			f.vname = NULL;
 			f.val = 0;
 			factorpush(f);
