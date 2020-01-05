@@ -2,7 +2,7 @@ CC = cc
 YACC = yacc -d
 
 
-compile: y.tab.c lex.yy.c symbol_table.o code_generator.o
+compile: lex.yy.c symbol_table.o code_generator.o y.tab.c
 	$(CC) y.tab.c lex.yy.c -ll -o parser symbol_table.o code_generator.o
 
 lex.yy.c: scanner.l
