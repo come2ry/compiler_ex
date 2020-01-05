@@ -41,7 +41,7 @@ Scope flag = GLOBAL_VAR;
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
-			printf("[program end.]\n");
+			// printf("[program end.]\n");
 			// print_all();
 			displayLlvmfundecl(declhd);
 		}
@@ -133,7 +133,7 @@ statement
 assignment_statement
         : IDENT ASSIGN expression
 		{
-			printf("[assignment_statement %s %d]\n", $1, flag);
+			// printf("[assignment_statement %s %d]\n", $1, flag);
 			factorpush(generateFactor($1));
 			insertCode(Store);
 		}
@@ -155,7 +155,7 @@ while_statement
 for_statement
         : FOR IDENT
 		{
-			printf("[for_statement %s %d]\n", $2, flag);
+			// printf("[for_statement %s %d]\n", $2, flag);
 			lookup($2);
 		} ASSIGN expression TO expression DO statement
         ;
@@ -167,7 +167,7 @@ proc_call_statement
 proc_call_name
         : IDENT
 		{
-			printf("[proc_call_name %s %d]\n", $1, flag);
+			// printf("[proc_call_name %s %d]\n", $1, flag);
 			lookup($1);
 		}
         ;
@@ -179,7 +179,7 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN
 		{
-			printf("[read_statement %s %d]\n", $3, flag);
+			// printf("[read_statement %s %d]\n", $3, flag);
 			lookup($3);
 		}
         ;
@@ -241,7 +241,7 @@ factor
 var_name
         : IDENT
 		{
-			printf("[var_name %s %d]\n", $1, flag);
+			// printf("[var_name %s %d]\n", $1, flag);
 
 			Factor f = generateFactor($1);
 			factorpush(f);

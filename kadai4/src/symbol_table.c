@@ -79,9 +79,9 @@ void insert(char *name, Scope kind)
     }
     addr++; //先頭アドレスをインクリメント
 
-    printf("insert:\n");
-    print_all();
-    printf("\n↓\n↓\n\n");
+    // printf("insert:\n");
+    // print_all();
+    // printf("\n↓\n↓\n\n");
 }
 
 //変数を記号表から検索して見つかれば構造体のアドレスを返す
@@ -96,9 +96,9 @@ struct SymbolTable *lookup(char *name)
             tmp = rec;
     }
 
-    printf("lookup:\n");
-    print_rec(tmp);
-    printf("\n↓\n↓\n\n");
+    // printf("lookup:\n");
+    // print_rec(tmp);
+    // printf("\n↓\n↓\n\n");
     // 見つからなかった場合はtmpにNULLが入っている
     return tmp;
 }
@@ -106,9 +106,9 @@ struct SymbolTable *lookup(char *name)
 void delete()
 {
     if (stack_head_ptr == NULL){
-        printf("delete error:\n");
-        printf("    記号表が空です\n");
-        printf("\n↓\n↓\n\n");
+        // printf("delete error:\n");
+        // printf("    記号表が空です\n");
+        // printf("\n↓\n↓\n\n");
         return;
     }
 
@@ -132,7 +132,7 @@ void delete()
         tmp->next = NULL;
     }
 
-    printf("delete complete:\n");
-    print_all();
-    printf("\n↓\n↓\n\n");
+    // printf("delete complete:\n");
+    // print_all();
+    // printf("\n↓\n↓\n\n");
 }
