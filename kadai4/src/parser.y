@@ -41,9 +41,9 @@ Scope flag = GLOBAL_VAR;
 program
         : PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
-			// printf("[program end.]\n");
-			// // print_all();
-			// displayLlvmfundecl(declhd);
+			printf("[program end.]\n");
+			// print_all();
+			displayLlvmfundecl(declhd);
 		}
         ;
 
