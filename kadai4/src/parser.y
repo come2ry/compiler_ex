@@ -51,8 +51,11 @@ outblock
         : var_decl_part subprog_decl_part
         {
 			insertDecl("main", 0, NULL);
-			Factor temp_f = {CONSTANT, NULL, 0};
-			factorpush(temp_f);
+			Factor f;
+			f.type = CONSTANT
+			f.vname = NULL;
+			f.val = 0;
+			factorpush(f);
 			insertCode(Alloca);
 			insertCode(Store);
         } statement
@@ -132,8 +135,7 @@ assignment_statement
         : IDENT ASSIGN expression
 		{
 			printf("[assignment_statement %s %d]\n", $1, flag);
-			Factor f = generateFactor($1);
-			factorpush(f);
+			factorpush(generateFactor($1));
 			insertCode(Store);
 		}
         ;
@@ -205,7 +207,8 @@ expression
         | PLUS term
         | MINUS term
 		{
-			Factor f = factorpop();
+			Factor f;
+			f = factorpop();
 			f.val = -f.val;
 			factorpush(f);
 		}

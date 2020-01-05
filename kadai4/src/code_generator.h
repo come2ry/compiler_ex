@@ -135,8 +135,14 @@ typedef struct fundecl
     struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
-
-
+void init_fstack();
+Factor factorpop();
+void factorpush(Factor x);
+void insertCode(LLVMcommand command);
+void displayFactor(Factor factor);
+void displayLlvmcodes(LLVMcode *code);
+void displayLlvmfundecl(Fundecl *decl);
 void insertDecl(char *fname, unsigned arity, Factor *args);
+Factor generateFactor(char *name);
 
 #endif
