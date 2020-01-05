@@ -228,7 +228,13 @@ expression
 term
         : factor
         | term MULT factor
+		{
+			insertCode(Mult);
+		}
         | term DIV factor
+		{
+			insertCode(Div);
+		}
         ;
 
 factor
