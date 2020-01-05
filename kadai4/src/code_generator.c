@@ -310,7 +310,7 @@ void displayLlvmcodes( LLVMcode *code ){
     displayLlvmcodes( code->next );
 }
 
-void displayLlvmfundecl(){
+void displayLlvmfundecl( Fundecl *decl ){
     if( decl == NULL )
         return;
     printf("define i32 @%s() {\n", decl->fname );

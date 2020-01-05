@@ -135,6 +135,15 @@ typedef struct fundecl
     struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
+LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
+LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
+
+/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
+Fundecl *declhd;
+/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
+Fundecl *decltl;
+
+
 void init_fstack();
 Factor factorpop();
 void factorpush(Factor x);
