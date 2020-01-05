@@ -101,9 +101,11 @@ void insertCode(LLVMcommand command) {
             retval.type = LOCAL_VAR;
             retval.val = cntr;
             cntr++;
-            (tmp->args).add.arg1 = arg1;
-            (tmp->args).add.arg2 = arg2;
-            (tmp->args).add.retval = retval;
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                (tmp->args).add.arg1 = arg1;
+                (tmp->args).add.arg2 = arg2;
+                (tmp->args).add.retval = retval;
+            }
             factorpush( retval );
             break;
         case Sub:
@@ -113,9 +115,11 @@ void insertCode(LLVMcommand command) {
             retval.type = LOCAL_VAR;
             retval.val = cntr;
             cntr++;
-            (tmp->args).sub.arg1 = arg1;
-            (tmp->args).sub.arg2 = arg2;
-            (tmp->args).sub.retval = retval;
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                (tmp->args).sub.arg1 = arg1;
+                (tmp->args).sub.arg2 = arg2;
+                (tmp->args).sub.retval = retval;
+            }
             factorpush( retval );
             break;
         case Mult:
@@ -125,9 +129,11 @@ void insertCode(LLVMcommand command) {
             retval.type = LOCAL_VAR;
             retval.val = cntr;
             cntr++;
-            (tmp->args).add.arg1 = arg1;
-            (tmp->args).add.arg2 = arg2;
-            (tmp->args).add.retval = retval;
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                (tmp->args).mult.arg1 = arg1;
+                (tmp->args).mult.arg2 = arg2;
+                (tmp->args).mult.retval = retval;
+            }
             factorpush( retval );
             break;
         case Div:
@@ -137,9 +143,11 @@ void insertCode(LLVMcommand command) {
             retval.type = LOCAL_VAR;
             retval.val = cntr;
             cntr++;
-            (tmp->args).sub.arg1 = arg1;
-            (tmp->args).sub.arg2 = arg2;
-            (tmp->args).sub.retval = retval;
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                (tmp->args).div.arg1 = arg1;
+                (tmp->args).div.arg2 = arg2;
+                (tmp->args).div.retval = retval;
+            }
             factorpush( retval );
             break;
         case Icmp:
