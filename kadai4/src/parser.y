@@ -53,7 +53,6 @@ outblock
 			insertDecl("main", 0, NULL);
 			Factor f;
 			f.type = CONSTANT;
-			f.vname = NULL;
 			f.val = 0;
 			factorpush(f);
 			insertCode(Alloca);
@@ -260,14 +259,14 @@ id_list
 		{
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
-				insert_code(Alloca);
+				insertCode(Alloca);
 			};
 		}
         | id_list COMMA IDENT
 		{
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
-				insert_code(Alloca);
+				insertCode(Alloca);
 			};
 		}
         ;
