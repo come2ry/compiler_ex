@@ -137,7 +137,6 @@ typedef struct fundecl
 
 
 
-static int cntr;
 void insertDecl(char *fname, unsigned arity, Factor *args);
 
 #endif

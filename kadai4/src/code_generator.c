@@ -11,8 +11,7 @@ Fundecl *declhd = NULL;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
 Fundecl *decltl = NULL;
 
-cntr = 0;
-
+static int cntr = 0;
 
 char cmp_array[][4] = {
     "eq",
@@ -335,17 +334,15 @@ void insertDecl(char *fname, unsigned arity, Factor *args)
     decl_ptr->codes = codehd = codetl = NULL;
     decl_ptr->next = NULL;
 
-    if (decltl == NULL)
+    if (declhd == NULL)
     {
         declhd = decltl = decl_ptr;
-        return;
+    } else {
+        decltl->next = decl_ptr;
+        decltl = decl_ptr;
     }
 
-    decltl->next = decl_ptr;
-    decltl = decl_ptr;
-
     cntr = 1; // %1
-
     return;
 }
 
