@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "code_generator.h"
+#include "symbol_table.h"
+
+*codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
+*codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
+
+/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
+*declhd = NULL;
+/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
+*decltl = NULL;
+cntr = 0;
 
 
 char cmp_array[][4] = {
@@ -34,16 +44,7 @@ void factorpush(Factor x)
 }
 
 
-LLVMcode *codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
-LLVMcode *codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
-
-/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-Fundecl *declhd = NULL;
-/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-Fundecl *decltl = NULL;
-
-
-void generateLlvm(LLVMcommand command, Factor f) {
+void insertCode(LLVMcommand command) {
     LLVMcode *tmp;             /* 生成した命令へのポインタ */
     tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
     tmp->next = NULL;          /* 次の命令へのポインタを初期化 */
@@ -69,7 +70,7 @@ void generateLlvm(LLVMcommand command, Factor f) {
             break;
         case Store:
             // store i32 10, i32* @n, align 4
-            arg2 = lookup();
+            arg2 = factorpop();
             arg1 = factorpop();
             (tmp->args).store.arg1 = arg1;
             (tmp->args).store.arg2 = arg2;
@@ -85,22 +86,22 @@ void generateLlvm(LLVMcommand command, Factor f) {
             factorpush( retval );
             break;
         case BrUncond:
-            // br label %2
-            (tmp->args).bruncond.arg1 = arg1.val;
+            // // br label %2
+            // (tmp->args).bruncond.arg1 = arg1.val;
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
-            arg3 = factorpop();
-            arg2 = factorpop();
-            arg1 = factorpop();
-            (tmp->args).brcond.arg1 = arg1;
-            (tmp->args).brcond.arg2 = arg2.val;
-            (tmp->args).brcond.arg3 = arg3.val;
+            // arg3 = factorpop();
+            // arg2 = factorpop();
+            // arg1 = factorpop();
+            // (tmp->args).brcond.arg1 = arg1;
+            // (tmp->args).brcond.arg2 = arg2.val;
+            // (tmp->args).brcond.arg3 = arg3.val;
             break;
         case Label:
             // ; <label>:5
-            l = factorpop();
-            (tmp->args).label.l = l.val;
+            // l = factorpop();
+            // (tmp->args).label.l = l.val;
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
@@ -115,6 +116,30 @@ void generateLlvm(LLVMcommand command, Factor f) {
             factorpush( retval );
             break;
         case Sub:
+            // %10 = sub nsw i32 %9, 1
+            arg2 = factorpop();
+            arg1 = factorpop();
+            retval.type = LOCAL_VAR;
+            retval.val = cntr;
+            cntr++;
+            (tmp->args).sub.arg1 = arg1;
+            (tmp->args).sub.arg2 = arg2;
+            (tmp->args).sub.retval = retval;
+            factorpush( retval );
+            break;
+        case Mult:
+            // %3 = mul nsw i32 %2, 2
+            arg2 = factorpop();
+            arg1 = factorpop();
+            retval.type = LOCAL_VAR;
+            retval.val = cntr;
+            cntr++;
+            (tmp->args).add.arg1 = arg1;
+            (tmp->args).add.arg2 = arg2;
+            (tmp->args).add.retval = retval;
+            factorpush( retval );
+            break;
+        case Div:
             // %10 = add nsw i32 %9, -1
             arg2 = factorpop();
             arg1 = factorpop();
@@ -128,21 +153,21 @@ void generateLlvm(LLVMcommand command, Factor f) {
             break;
         case Icmp:
             // %4 = icmp sgt i32 %3, 0
-            arg1 = factorpop();
-            arg2 = factorpop();
-            type = factorpop();
-            retval.type = LOCAL_VAR;
-            retval.val = cntr;
-            cntr++;
-            (tmp->args).icmp.type = type.val;
-            (tmp->args).icmp.arg1 = arg1;
-            (tmp->args).icmp.arg2 = arg2;
-            (tmp->args).icmp.retval = retval;
-            factorpush( retval );
+            // arg1 = factorpop();
+            // arg2 = factorpop();
+            // type = factorpop();
+            // retval.type = LOCAL_VAR;
+            // retval.val = cntr;
+            // cntr++;
+            // (tmp->args).icmp.type = type.val;
+            // (tmp->args).icmp.arg1 = arg1;
+            // (tmp->args).icmp.arg2 = arg2;
+            // (tmp->args).icmp.retval = retval;
+            // factorpush( retval );
             break;
         case Ret:
             // ret i32 0
-            (tmp->args).ret.arg1 = arg1;
+            // (tmp->args).ret.arg1 = arg1;
             break;
         default:
             break;
@@ -176,12 +201,12 @@ void displayFactor( Factor factor ){
         default:
             break;
     }
-    
+
     return;
 }
 
 void displayLlvmcodes( LLVMcode *code ){
-    if( code == NULL ) 
+    if( code == NULL )
         return;
     printf("  ");
     switch( code->command ){
@@ -236,11 +261,29 @@ void displayLlvmcodes( LLVMcode *code ){
             printf("\n");
             break;
         case Sub:
-            // %10 = add nsw i32 %9, -1
+            // %10 = sub nsw i32 %9, 1
             displayFactor( (code->args).sub.retval );
-            printf(" = add nsw i32 ");
+            printf(" = sub nsw i32 ");
             displayFactor( (code->args).sub.arg1 );
-            printf(", -");
+            printf(", ");
+            displayFactor( (code->args).sub.arg2 );
+            printf("\n");
+            break;
+        case Mult:
+            // %5 = mul nsw i32 %4, 2
+            displayFactor( (code->args).add.retval );
+            printf(" = mul nsw i32 ");
+            displayFactor( (code->args).add.arg1 );
+            printf(", ");
+            displayFactor( (code->args).add.arg2 );
+            printf("\n");
+            break;
+        case Div:
+            // %3 = sdiv i32 %2, 2
+            displayFactor( (code->args).sub.retval );
+            printf(" = sdiv i32 ");
+            displayFactor( (code->args).sub.arg1 );
+            printf(", ");
             displayFactor( (code->args).sub.arg2 );
             printf("\n");
             break;
@@ -257,9 +300,9 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Ret:
             // ret i32 0
-            printf("ret i32 ");
-            displayFactor( (code->args).ret.arg1 );
-            printf("\n");
+            // printf("ret i32 ");
+            // displayFactor( (code->args).ret.arg1 );
+            // printf("\n");
             break;
         default:
             break;
@@ -277,6 +320,46 @@ void displayLlvmfundecl( Fundecl *decl ){
         printf("\n");
         displayLlvmfundecl( decl->next );
     }
-    
+
     return;
+}
+
+
+
+void insertDecl(char *fname, unsigned arity, Factor *args)
+{
+    Fundecl *decl_ptr = (Fundecl *)malloc(sizeof(Fundecl));
+    strcpy(decl_ptr->fname, fname);
+    decl_ptr->arity = arity;
+    decl_ptr->codes = codehd = codetl = NULL;
+    decl_ptr->next = NULL;
+
+    if (decltl == NULL)
+    {
+        declhd = decltl = decl_ptr;
+        return;
+    }
+
+    decltl->next = decl_ptr;
+    decltl = decl_ptr;
+
+    cntr = 1; // %1
+
+    return;
+}
+
+
+Factor generateFactor(char *name)
+{
+    struct SymbolTable *rec = lookup(name);
+    if (rec == NULL) {
+        fprintf(stderr, "ERROR: %sは未定義の変数です。\n", name);
+        exit(1);
+    }
+
+    Factor f;
+    f.type = rec->kind;
+    strcpy(f.vname, rec->name);
+    f.val = NULL;
+    return f;
 }

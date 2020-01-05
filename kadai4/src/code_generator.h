@@ -22,6 +22,8 @@ typedef enum
     Label,    /* label  */
     Add,      /* add    */
     Sub,      /* sub    */
+    Mult,     /* mult   */
+    Div,      /* div    */
     Icmp,     /* icmp   */
     Ret       /* ret    */
 } LLVMcommand;
@@ -36,7 +38,6 @@ typedef enum
     SLT,   /* slt （<，符号付き） */
     SLE    /* sle （<=，符号付き）*/
 } Cmptype;
-
 
 typedef struct llvmcode
 {
@@ -88,6 +89,18 @@ typedef struct llvmcode
             Factor retval;
         } sub;
         struct
+        { /* mult   */
+            Factor arg1;
+            Factor arg2;
+            Factor retval;
+        } mult;
+        struct
+        { /* div    */
+            Factor arg1;
+            Factor arg2;
+            Factor retval;
+        } div;
+        struct
         { /* icmp   */
             Cmptype type;
             Factor arg1;
@@ -103,7 +116,6 @@ typedef struct llvmcode
     struct llvmcode *next;
 } LLVMcode;
 
-
 /* 変数もしくは定数のためのスタック */
 typedef struct
 {
@@ -112,7 +124,6 @@ typedef struct
 } Factorstack;
 
 Factorstack fstack; /* 整数もしくはレジスタ番号を保持するスタック */
-
 
 /* LLVMの関数定義 */
 typedef struct fundecl
@@ -124,7 +135,15 @@ typedef struct fundecl
     struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
+LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
+LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
 
-static int cntr = 1;
+/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
+Fundecl *declhd;
+/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
+Fundecl *decltl;
+
+static int cntr;
+void insertDecl(char *fname, unsigned arity, Factor *args);
 
 #endif

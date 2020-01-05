@@ -39,27 +39,28 @@ Scope flag = GLOBAL_VAR;
 %%
 
 program
-        : PROGRAM IDENT SEMICOLON
-		{
-			init_fstack();
-		}
-		outblock PERIOD
+        : PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
 			printf("[program end.]\n");
-			print_all();
+			// print_all();
+			displayLlvmfundecl(declhd);
 		}
         ;
 
 outblock
-        : var_decl_part subprog_decl_part statement
+        : var_decl_part subprog_decl_part
+        {
+			insertDecl("main", 0, NULL);
+			Factor temp_f = {CONSTANT, NULL, 0};
+			factorpush(temp_f);
+			insertCode(Alloca);
+			insertCode(Store);
+        } statement
         ;
 
 var_decl_part
         : /* empty */
         | var_decl_list SEMICOLON
-		{
-			flag = LOCAL_VAR;
-		}
         ;
 
 var_decl_list
@@ -73,13 +74,7 @@ var_decl
 
 subprog_decl_part
         : subprog_decl_list SEMICOLON
-		{
-			// TODO
-		}
         | /* empty */
-		{
-
-		}
         ;
 
 subprog_decl_list
@@ -92,7 +87,11 @@ subprog_decl
         ;
 
 proc_decl
-        : PROCEDURE proc_name SEMICOLON inblock
+        : PROCEDURE proc_name SEMICOLON
+		{
+			flag = LOCAL_VAR;
+		}
+		inblock
 		{
 			printf("[proc_decl]\n");
 			delete();
@@ -104,6 +103,7 @@ proc_name
         : IDENT
 		{
 			insert($1, PROC_NAME);
+			insertDecl($1, 0, NULL);
 		}
         ;
 
@@ -129,11 +129,13 @@ statement
         ;
 
 assignment_statement
-        : IDENT ASSIGN
+        : IDENT ASSIGN expression
 		{
 			printf("[assignment_statement %s %d]\n", $1, flag);
-			lookup($1);
-		} expression
+			Factor f = generateFactor($1);
+			factorpush(f);
+			insertCode(Store);
+		}
         ;
 
 if_statement
@@ -202,13 +204,18 @@ expression
         : term
         | PLUS term
         | MINUS term
+		{
+			Factor f = factorpop();
+			f.val = -f.val;
+			factorpush(f);
+		}
         | expression PLUS term
         {
-			generateLlvm(Add);
+			insertCode(Add);
         }
         | expression MINUS term
         {
-			generateLlvm(Sub);
+			insertCode(Sub);
         }
         ;
 
@@ -222,6 +229,10 @@ term
 factor
         : var_name
         | NUMBER
+		{
+			Factor f = {CONSTANT, NULL, $1};
+			factorpush(f);
+		}
         | LPAREN expression RPAREN
         ;
 
@@ -229,7 +240,10 @@ var_name
         : IDENT
 		{
 			printf("[var_name %s %d]\n", $1, flag);
-			lookup($1);
+
+			Factor f = generateFactor($1);
+			factorpush(f);
+			insertCode(Load);
 		}
         ;
 
@@ -242,12 +256,16 @@ id_list
         : IDENT
 		{
 			insert($1, flag);
-			// TODO: register 割り当て
+			if (flag == LOCAL_VAR) {
+				insert_code(Alloca);
+			};
 		}
         | id_list COMMA IDENT
 		{
 			insert($3, flag);
-			// TODO: register 割り当て
+			if (flag == LOCAL_VAR) {
+				insert_code(Alloca);
+			};
 		}
         ;
 
