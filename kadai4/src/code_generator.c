@@ -3,14 +3,15 @@
 #include "code_generator.h"
 #include "symbol_table.h"
 
-*codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
-*codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
+LLVMcode *codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
+LLVMcode *codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
 
 /* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-*declhd = NULL;
+Fundecl *declhd = NULL;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-*decltl = NULL;
-cntr = 0;
+Fundecl *decltl = NULL;
+
+static int cntr = 0;
 
 
 char cmp_array[][4] = {
@@ -334,17 +335,15 @@ void insertDecl(char *fname, unsigned arity, Factor *args)
     decl_ptr->codes = codehd = codetl = NULL;
     decl_ptr->next = NULL;
 
-    if (decltl == NULL)
+    if (declhd == NULL)
     {
         declhd = decltl = decl_ptr;
-        return;
+    } else {
+        decltl->next = decl_ptr;
+        decltl = decl_ptr;
     }
 
-    decltl->next = decl_ptr;
-    decltl = decl_ptr;
-
     cntr = 1; // %1
-
     return;
 }
 
