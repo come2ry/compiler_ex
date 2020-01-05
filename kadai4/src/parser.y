@@ -132,7 +132,8 @@ assignment_statement
         : IDENT ASSIGN expression
 		{
 			printf("[assignment_statement %s %d]\n", $1, flag);
-			Factor f = generateFactor($1);
+			Factor f;
+			f = generateFactor($1);
 			factorpush(f);
 			insertCode(Store);
 		}
@@ -241,7 +242,8 @@ var_name
 		{
 			printf("[var_name %s %d]\n", $1, flag);
 
-			Factor f = generateFactor($1);
+			Factor f;
+			f = generateFactor($1);
 			factorpush(f);
 			insertCode(Load);
 		}
