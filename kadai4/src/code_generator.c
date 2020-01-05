@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "code_generator.h"
 #include "symbol_table.h"
+#include "code_generator.h"
 
 LLVMcode *codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
 LLVMcode *codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
