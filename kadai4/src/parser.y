@@ -43,7 +43,7 @@ program
 		{
 			printf("[program end.]\n");
 			// print_all();
-			displayLlvmfundecl();
+			displayLlvmfundecl(declhd);
 		}
         ;
 
