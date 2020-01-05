@@ -304,7 +304,7 @@ void displayLlvmcodes( LLVMcode *code ){
 void displayLlvmfundecl( Fundecl *decl ){
     if( decl == NULL )
         return;
-    printf("define i32 @%s() {\n", decl->fname );
+    printf("define i32 @%s() #0 {\n", decl->fname );
     displayLlvmcodes( decl->codes );
     printf("}\n");
     if( decl->next != NULL ) {
@@ -363,4 +363,6 @@ void displayGlobalVar(){
 
         printf("@%s = common global i32 0, align 4\n", rec->name);
     }
+
+    printf("\n");
 }

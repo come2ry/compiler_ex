@@ -209,10 +209,10 @@ expression
         | PLUS term
         | MINUS term
 		{
-			Factor f;
-			f = factorpop();
-			f.val = -f.val;
-			factorpush(f);
+			// Factor f;
+			// f = factorpop();
+			// f.val = -f.val;
+			// factorpush(f);
 		}
         | expression PLUS term
         {
@@ -235,7 +235,9 @@ factor
         : var_name
         | NUMBER
 		{
-			Factor f = {CONSTANT, NULL, $1};
+			Factor f;
+			f.type = CONSTANT;
+			f.val = $1;
 			factorpush(f);
 		}
         | LPAREN expression RPAREN
