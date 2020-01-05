@@ -44,7 +44,7 @@ void factorpush(Factor x)
 }
 
 
-void insertCode(LLVMcommand command) {
+void generateCode(LLVMcommand command) {
     LLVMcode *tmp;             /* 生成した命令へのポインタ */
     tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
     tmp->next = NULL;          /* 次の命令へのポインタを初期化 */
@@ -57,6 +57,7 @@ void insertCode(LLVMcommand command) {
             retval.val = cntr;         /* 新規のレジスタ番号を取得 */
             cntr++;                    /* カウンタをインクリメント */
             (tmp->args).alloca.retval = retval; /* 返り場所のレジスタを指定 */
+            _insertCode(tmp);
             factorpush( retval ); /* 関数の返り場所をスタックにプッシュ */
             break;
         case Store:
@@ -65,6 +66,7 @@ void insertCode(LLVMcommand command) {
             arg1 = factorpop();
             (tmp->args).store.arg1 = arg1;
             (tmp->args).store.arg2 = arg2;
+            _insertCode(tmp);
             break;
         case Load:
             // %6 = load i32, i32* @sum, align
@@ -74,11 +76,13 @@ void insertCode(LLVMcommand command) {
             cntr++;
             (tmp->args).load.arg1 = arg1;
             (tmp->args).load.retval = retval;
+            _insertCode(tmp);
             factorpush( retval );
             break;
         case BrUncond:
             // // br label %2
             // (tmp->args).bruncond.arg1 = arg1.val;
+            // _insertCode(tmp);
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
@@ -88,11 +92,13 @@ void insertCode(LLVMcommand command) {
             // (tmp->args).brcond.arg1 = arg1;
             // (tmp->args).brcond.arg2 = arg2.val;
             // (tmp->args).brcond.arg3 = arg3.val;
+            // _insertCode(tmp);
             break;
         case Label:
             // ; <label>:5
             // l = factorpop();
             // (tmp->args).label.l = l.val;
+            // _insertCode(tmp);
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
@@ -105,6 +111,7 @@ void insertCode(LLVMcommand command) {
                 (tmp->args).add.arg1 = arg1;
                 (tmp->args).add.arg2 = arg2;
                 (tmp->args).add.retval = retval;
+                _insertCode(tmp);
             }
             factorpush( retval );
             break;
@@ -119,6 +126,7 @@ void insertCode(LLVMcommand command) {
                 (tmp->args).sub.arg1 = arg1;
                 (tmp->args).sub.arg2 = arg2;
                 (tmp->args).sub.retval = retval;
+                _insertCode(tmp);
             }
             factorpush( retval );
             break;
@@ -133,6 +141,7 @@ void insertCode(LLVMcommand command) {
                 (tmp->args).mult.arg1 = arg1;
                 (tmp->args).mult.arg2 = arg2;
                 (tmp->args).mult.retval = retval;
+                _insertCode(tmp);
             }
             factorpush( retval );
             break;
@@ -147,6 +156,7 @@ void insertCode(LLVMcommand command) {
                 (tmp->args).div.arg1 = arg1;
                 (tmp->args).div.arg2 = arg2;
                 (tmp->args).div.retval = retval;
+                _insertCode(tmp);
             }
             factorpush( retval );
             break;
@@ -162,16 +172,20 @@ void insertCode(LLVMcommand command) {
             // (tmp->args).icmp.arg1 = arg1;
             // (tmp->args).icmp.arg2 = arg2;
             // (tmp->args).icmp.retval = retval;
+            // _insertCode(tmp);
             // factorpush( retval );
             break;
         case Ret:
             // ret i32 0
             // (tmp->args).ret.arg1 = arg1;
+            // _insertCode(tmp);
             break;
         default:
             break;
     }
+}
 
+void _insertCode(LLVMcode *tmp) {
     if( codetl == NULL ){ /* 解析中の関数の最初の命令の場合 */
         if( decltl == NULL ){   /* 解析中の関数がない場合 */
             /* 関数宣言を処理する段階でリストが作られているので，ありえない */
@@ -184,7 +198,6 @@ void insertCode(LLVMcommand command) {
         codetl = tmp;       /* 命令列の末尾の命令として記憶 */
     }
 }
-
 
 void displayFactor( Factor factor ){
     switch( factor.type ){

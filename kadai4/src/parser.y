@@ -55,8 +55,8 @@ outblock
 			f.type = CONSTANT;
 			f.val = 0;
 			factorpush(f);
-			insertCode(Alloca);
-			insertCode(Store);
+			generateCode(Alloca);
+			generateCode(Store);
         } statement
         ;
 
@@ -138,7 +138,7 @@ assignment_statement
 		{
 			// printf("[assignment_statement %s %d]\n", $1, flag);
 			factorpush(generateFactor($1));
-			insertCode(Store);
+			generateCode(Store);
 		}
         ;
 
@@ -216,11 +216,11 @@ expression
 		}
         | expression PLUS term
         {
-			insertCode(Add);
+			generateCode(Add);
         }
         | expression MINUS term
         {
-			insertCode(Sub);
+			generateCode(Sub);
         }
         ;
 
@@ -229,11 +229,11 @@ term
         : factor
         | term MULT factor
 		{
-			insertCode(Mult);
+			generateCode(Mult);
 		}
         | term DIV factor
 		{
-			insertCode(Div);
+			generateCode(Div);
 		}
         ;
 
@@ -256,7 +256,7 @@ var_name
 
 			Factor f = generateFactor($1);
 			factorpush(f);
-			insertCode(Load);
+			generateCode(Load);
 		}
         ;
 
@@ -270,14 +270,14 @@ id_list
 		{
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
-				insertCode(Alloca);
+				generateCode(Alloca);
 			}
 		}
         | id_list COMMA IDENT
 		{
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
-				insertCode(Alloca);
+				generateCode(Alloca);
 			};
 		}
         ;
