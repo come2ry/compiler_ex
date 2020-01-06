@@ -199,8 +199,8 @@ void generateCode(LLVMcommand command) {
             break;
         case Ret:
             // ret i32 0
-            // (tmp->args).ret.arg1 = arg1;
-            // _insertCode(tmp);
+            (tmp->args).ret.arg1 = arg1;
+            _insertCode(tmp);
             break;
         default:
             break;
@@ -334,9 +334,8 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Ret:
             // ret i32 0
-            // printf("ret i32 ");
-            // displayFactor( (code->args).ret.arg1 );
-            printf("ret i32 0");
+            printf("ret i32 ");
+            displayFactor( (code->args).ret.arg1 );
             printf("\n");
             break;
         default:
