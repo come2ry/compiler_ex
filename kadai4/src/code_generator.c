@@ -12,6 +12,8 @@ Fundecl *declhd = NULL;
 Fundecl *decltl = NULL;
 
 static int cntr = 0;
+extern FILE *fp;
+
 
 char cmp_array[][4] = {
     "eq",
@@ -49,9 +51,9 @@ void displayfstack() {
     int i;
     for (i = 1; i <= fstack.top; i++) {
         displayFactor(fstack.element[i]);
-        printf(" ");
+        fprintf(fp, " ");
     }
-    printf("\n");
+    fprintf(fp, "\n");
 }
 
 void generateCode(LLVMcommand command) {
@@ -225,13 +227,13 @@ void _insertCode(LLVMcode *tmp) {
 void displayFactor( Factor factor ){
     switch( factor.type ){
         case GLOBAL_VAR:
-            printf("@%s", factor.vname );
+            fprintf(fp, "@%s", factor.vname );
             break;
         case LOCAL_VAR:
-            printf("%%%d", factor.val );
+            fprintf(fp, "%%%d", factor.val );
             break;
         case CONSTANT:
-            printf("%d", factor.val );
+            fprintf(fp, "%d", factor.val );
             break;
         default:
             break;
@@ -243,101 +245,101 @@ void displayFactor( Factor factor ){
 void displayLlvmcodes( LLVMcode *code ){
     if( code == NULL )
         return;
-    printf("  ");
+    fprintf(fp, "  ");
     switch( code->command ){
         // case Common:
         //     // @n = common global i32 0, align 4
         //     displayFactor( (code->args).common.retval );
-        //     printf(" = common global i32 ");
+        //     fprintf(fp, " = common global i32 ");
         //     displayFactor( (code->args).common.arg1 );
-        //     printf(", align 4\n");
+        //     fprintf(fp, ", align 4\n");
         //     break;
         case Alloca:
             // %1 = alloca i32, align 4
             displayFactor( (code->args).alloca.retval );
-            printf(" = alloca i32, align 4\n");
+            fprintf(fp, " = alloca i32, align 4\n");
             break;
         case Store:
             // store i32 10, i32* @n, align
-            printf("store i32 ");
+            fprintf(fp, "store i32 ");
             displayFactor( (code->args).store.arg1 );
-            printf(", i32* ");
+            fprintf(fp, ", i32* ");
             displayFactor( (code->args).store.arg2 );
-            printf(", align 4\n");
+            fprintf(fp, ", align 4\n");
             break;
         case Load:
             // %6 = load i32, i32* @sum, align
             displayFactor( (code->args).load.retval );
-            printf(" = load i32, i32* ");
+            fprintf(fp, " = load i32, i32* ");
             displayFactor( (code->args).load.arg1 );
-            printf(", align 4\n");
+            fprintf(fp, ", align 4\n");
             break;
         case BrUncond:
             // br label %2
-            printf("br label %%%i\n", (code->args).bruncond.arg1 );
+            fprintf(fp, "br label %%%i\n", (code->args).bruncond.arg1 );
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
-            printf("br i1 ");
+            fprintf(fp, "br i1 ");
             displayFactor( (code->args).brcond.arg1 );
-            printf(", label %%%i, %%%i\n", (code->args).brcond.arg2, (code->args).brcond.arg3);
+            fprintf(fp, ", label %%%i, %%%i\n", (code->args).brcond.arg2, (code->args).brcond.arg3);
             break;
         case Label:
             // ; <label>:5
-            printf("; <label>:%i\n", (code->args).label.l );
+            fprintf(fp, "; <label>:%i\n", (code->args).label.l );
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
             displayFactor( (code->args).add.retval );
-            printf(" = add nsw i32 ");
+            fprintf(fp, " = add nsw i32 ");
             displayFactor( (code->args).add.arg1 );
-            printf(", ");
+            fprintf(fp, ", ");
             displayFactor( (code->args).add.arg2 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         case Sub:
             // %10 = sub nsw i32 %9, 1
             displayFactor( (code->args).sub.retval );
-            printf(" = sub nsw i32 ");
+            fprintf(fp, " = sub nsw i32 ");
             displayFactor( (code->args).sub.arg1 );
-            printf(", ");
+            fprintf(fp, ", ");
             displayFactor( (code->args).sub.arg2 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         case Mult:
             // %5 = mul nsw i32 %4, 2
             displayFactor( (code->args).add.retval );
-            printf(" = mul nsw i32 ");
+            fprintf(fp, " = mul nsw i32 ");
             displayFactor( (code->args).add.arg1 );
-            printf(", ");
+            fprintf(fp, ", ");
             displayFactor( (code->args).add.arg2 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         case Div:
             // %3 = sdiv i32 %2, 2
             displayFactor( (code->args).sub.retval );
-            printf(" = sdiv i32 ");
+            fprintf(fp, " = sdiv i32 ");
             displayFactor( (code->args).sub.arg1 );
-            printf(", ");
+            fprintf(fp, ", ");
             displayFactor( (code->args).sub.arg2 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         case Icmp:
             // %4 = icmp sgt i32 %3, 0
             displayFactor( (code->args).icmp.retval );
-            printf(" = icmp ");
-            printf(cmp_array[(code->args).icmp.type]);
-            printf(" i32 ");
+            fprintf(fp, " = icmp ");
+            fprintf(fp, cmp_array[(code->args).icmp.type]);
+            fprintf(fp, " i32 ");
             displayFactor( (code->args).icmp.arg1 );
-            printf(", ");
+            fprintf(fp, ", ");
             displayFactor( (code->args).icmp.arg2 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         case Ret:
             // ret i32 0
-            printf("ret i32 ");
+            fprintf(fp, "ret i32 ");
             displayFactor( (code->args).ret.arg1 );
-            printf("\n");
+            fprintf(fp, "\n");
             break;
         default:
             break;
@@ -348,11 +350,11 @@ void displayLlvmcodes( LLVMcode *code ){
 void displayLlvmfundecl( Fundecl *decl ){
     if( decl == NULL )
         return;
-    printf("define i32 @%s() #0 {\n", decl->fname );
+    fprintf(fp, "define i32 @%s() #0 {\n", decl->fname );
     displayLlvmcodes( decl->codes );
-    printf("}\n");
+    fprintf(fp, "}\n");
     if( decl->next != NULL ) {
-        printf("\n");
+        fprintf(fp, "\n");
         displayLlvmfundecl( decl->next );
     }
 
@@ -405,8 +407,8 @@ void displayGlobalVar(){
         if (rec->kind != GLOBAL_VAR)
             break;
 
-        printf("@%s = common global i32 0, align 4\n", rec->name);
+        fprintf(fp, "@%s = common global i32 0, align 4\n", rec->name);
     }
 
-    printf("\n");
+    fprintf(fp, "\n");
 }

@@ -13,6 +13,8 @@ extern int yylineno;
 extern char *yytext;
 
 Scope flag = GLOBAL_VAR;
+char *fname = "result.ll";
+FILE *fp;
 
 %}
 
@@ -39,7 +41,15 @@ Scope flag = GLOBAL_VAR;
 %%
 
 program
-        : PROGRAM IDENT SEMICOLON outblock PERIOD
+        :
+		{
+			fp = fopen(fname, "w");
+			if (fp == NULL) {
+				printf("ERROR cannot open\n");
+				exit(1);
+			}
+		}
+		PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
 			// printf("[program end.]\n");
 			// print_all();
