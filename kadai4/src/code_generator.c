@@ -47,7 +47,7 @@ void factorpush(Factor x)
 
 void displayfstack() {
     int i;
-    for (i = 0; i <= fstack.top; i++) {
+    for (i = 1; i <= fstack.top; i++) {
         displayFactor(fstack.element[i]);
         printf(" ");
     }
