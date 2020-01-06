@@ -199,6 +199,7 @@ void generateCode(LLVMcommand command) {
             break;
         case Ret:
             // ret i32 0
+            arg1 = factorpop();
             (tmp->args).ret.arg1 = arg1;
             _insertCode(tmp);
             break;
