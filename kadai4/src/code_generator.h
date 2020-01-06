@@ -147,7 +147,7 @@ Fundecl *decltl;
 void init_fstack();
 Factor factorpop();
 void factorpush(Factor x);
-void generateCode(LLVMcommand command);
+void generateCode(LLVMcommand command); 
 void displayFactor(Factor factor);
 void displayLlvmcodes(LLVMcode *code);
 void displayLlvmfundecl(Fundecl *decl);
