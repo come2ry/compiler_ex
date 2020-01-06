@@ -59,7 +59,11 @@ outblock
 			factorpush(f);
 			generateCode(Alloca);
 			generateCode(Store);
-        } statement
+        }
+		statement
+		{
+			generateCode(Ret);
+		}
         ;
 
 var_decl_part

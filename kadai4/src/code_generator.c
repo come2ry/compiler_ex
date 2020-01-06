@@ -336,7 +336,8 @@ void displayLlvmcodes( LLVMcode *code ){
             // ret i32 0
             // printf("ret i32 ");
             // displayFactor( (code->args).ret.arg1 );
-            // printf("\n");
+            print("ret i32 0");
+            printf("\n");
             break;
         default:
             break;
