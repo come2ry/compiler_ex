@@ -50,12 +50,12 @@ program
 outblock
         : var_decl_part subprog_decl_part
         {
+			// printf("[outblock]\n");
 			insertDecl("main", 0, NULL);
 			init_fstack();
 			Factor f;
 			f.type = CONSTANT;
 			f.val = 0;
-			printf("[outblock]\n");
 			factorpush(f);
 			generateCode(Alloca);
 			generateCode(Store);
@@ -147,7 +147,7 @@ assignment_statement
         : IDENT ASSIGN expression
 		{
 			// printf("[assignment_statement %s %d]\n", $1, flag);
-			printf("[assignment_statement]\n");
+
 			factorpush(generateFactor($1));
 			generateCode(Store);
 		}
@@ -220,19 +220,19 @@ expression
         | PLUS term
         | MINUS term
 		{
-			// Factor f;
-			// f = factorpop();
-			// f.val = -f.val;
-			// factorpush(f);
+			Factor f;
+			f = factorpop();
+			f.val = -f.val;
+			factorpush(f);
 		}
         | expression PLUS term
         {
-			printf("[ex PLUS term]\n");
+			// printf("[ex PLUS term]\n");
 			generateCode(Add);
         }
         | expression MINUS term
         {
-			printf("[ex Sub term]\n");
+			// printf("[ex Sub term]\n");
 			generateCode(Sub);
         }
         ;
@@ -242,12 +242,12 @@ term
         : factor
         | term MULT factor
 		{
-			printf("[term Mult factor]\n");
+			// printf("[term Mult factor]\n");
 			generateCode(Mult);
 		}
         | term DIV factor
 		{
-			printf("[term Div factor]\n");
+			// printf("[term Div factor]\n");
 			generateCode(Div);
 		}
         ;
@@ -256,7 +256,7 @@ factor
         : var_name
         | NUMBER
 		{
-			printf("[factor]\n");
+			// printf("[factor]\n");
 			Factor f;
 			f.type = CONSTANT;
 			f.val = $1;
@@ -268,7 +268,7 @@ factor
 var_name
         : IDENT
 		{
-			printf("[var_name %s %d]\n", $1, flag);
+			// printf("[var_name %s %d]\n", $1, flag);
 
 			Factor f = generateFactor($1);
 			factorpush(f);
@@ -284,7 +284,7 @@ arg_list
 id_list
         : IDENT
 		{
-			printf("[id_list]\n");
+			// printf("[id_list]\n");
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
@@ -292,7 +292,7 @@ id_list
 		}
         | id_list COMMA IDENT
 		{
-			printf("[id_list]\n");
+			// printf("[id_list]\n");
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
