@@ -33,6 +33,7 @@ Factor factorpop()
     Factor tmp;
     tmp = fstack.element[fstack.top];
     fstack.top--;
+    displayfstack();
     return tmp;
 }
 
@@ -40,9 +41,17 @@ void factorpush(Factor x)
 {
     fstack.top++;
     fstack.element[fstack.top] = x;
+    displayfstack();
     return;
 }
 
+void displayfstack() {
+    for (int i = 0; i <= fstack.top; i++) {
+        displayFactor(fstack.element[i]);
+        printf(" ");
+    }
+    printf("\n");
+}
 
 void generateCode(LLVMcommand command) {
     LLVMcode *tmp;             /* 生成した命令へのポインタ */

@@ -51,6 +51,7 @@ outblock
         : var_decl_part subprog_decl_part
         {
 			insertDecl("main", 0, NULL);
+			init_fstack();
 			Factor f;
 			f.type = CONSTANT;
 			f.val = 0;

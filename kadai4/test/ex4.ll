@@ -9,12 +9,8 @@ target triple = "x86_64-apple-macosx10.14.0"
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  store i32 7, i32* @x, align 4
-  %2 = load i32, i32* @x, align 4
-  %3 = sub nsw i32 15, %2
-  store i32 %3, i32* @x, align 4
-  %4 = load i32, i32* @x, align 4
-  ret i32 %4
+  store i32 15, i32* @x, align 4
+  ret i32 0
 }
 
 attributes #0 = { noinline nounwind optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
