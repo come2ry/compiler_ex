@@ -124,7 +124,7 @@ void generateCode(LLVMcommand command) {
                 _insertCode(tmp);
             } else {
                 retval.type = CONSTANT;
-                retval.val = arg1.val - arg2.val;
+                retval.val = arg1.val + arg2.val;
             }
             factorpush( retval );
             break;
@@ -142,7 +142,7 @@ void generateCode(LLVMcommand command) {
                 _insertCode(tmp);
             } else {
                 retval.type = CONSTANT;
-                retval.val = arg1.val + arg2.val;
+                retval.val = arg1.val - arg2.val;
             }
             factorpush( retval );
             break;
