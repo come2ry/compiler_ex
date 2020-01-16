@@ -69,8 +69,8 @@ typedef struct llvmcode
         struct
         { /* brc    */
             Factor arg1;
-            int arg2;
-            int arg3;
+            int *arg2;
+            int *arg3;
         } brcond;
         struct
         { /* label  */
@@ -144,9 +144,30 @@ Fundecl *declhd;
 Fundecl *decltl;
 
 
+typedef struct
+{
+    int *element[100];
+    unsigned int top;
+} BrAddstack;
+
+typedef struct
+{
+    int element[100];
+    unsigned int top;
+} Labelstack;
+
+BrAddstack bstack = {{}, 0};
+Labelstack lstack = {{}, 0};
+
+
 void init_fstack();
 Factor factorpop();
 void factorpush(Factor x);
+int *brpop();
+void brpush(int *x);
+int labelpop();
+void labelpush(int x);
+void backpatch();
 void generateCode(LLVMcommand command);
 void displayFactor(Factor factor);
 void displayLlvmcodes(LLVMcode *code);

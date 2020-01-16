@@ -47,6 +47,41 @@ void factorpush(Factor x)
     return;
 }
 
+int *brpop() {
+    int *tmp;
+    tmp = bstack.element[bstack.top];
+    bstack.top--;
+    return tmp;
+}
+
+void brpush(int *x) {
+    bstack.top++;
+    bstack.element[bstack.top] = x;
+    return;
+}
+
+int labelpop() {
+    int tmp;
+    tmp = lstack.element[lstack.top];
+    lstack.top--;
+    return tmp;
+}
+
+void labelpush(int x) {
+    lstack.top++;
+    lstack.element[lstack.top] = x;
+    return;
+}
+
+void backpatch() {
+    while (bstack.top > 0) {
+        int *bradr = brpop();
+        int label = labelpop();
+        *bradr = label;
+    }
+    return;
+}
+
 void displayfstack() {
     int i;
     for (i = 1; i <= fstack.top; i++) {
@@ -66,8 +101,7 @@ void generateCode(LLVMcommand command) {
     switch( command ){
         case Alloca:
             retval.type = LOCAL_VAR;   /* 結果を格納するレジスタは局所 */
-            retval.val = cntr;         /* 新規のレジスタ番号を取得 */
-            cntr++;                    /* カウンタをインクリメント */
+            retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
             (tmp->args).alloca.retval = retval; /* 返り場所のレジスタを指定 */
             insertCode(tmp);
             factorpush( retval ); /* 関数の返り場所をスタックにプッシュ */
@@ -84,15 +118,14 @@ void generateCode(LLVMcommand command) {
             // %6 = load i32, i32* @sum, align
             arg1 = factorpop();
             retval.type = LOCAL_VAR;
-            retval.val = cntr;
-            cntr++;
+            retval.val = cntr++;
             (tmp->args).load.arg1 = arg1;
             (tmp->args).load.retval = retval;
             insertCode(tmp);
             factorpush( retval );
             break;
         case BrUncond:
-            // // br label %2
+            // br label %2
             // (tmp->args).bruncond.arg1 = arg1.val;
             // insertCode(tmp);
             break;
@@ -100,17 +133,23 @@ void generateCode(LLVMcommand command) {
             // br i1 %4, label %5, label %1
             // arg3 = factorpop();
             // arg2 = factorpop();
-            // arg1 = factorpop();
-            // (tmp->args).brcond.arg1 = arg1;
-            // (tmp->args).brcond.arg2 = arg2.val;
-            // (tmp->args).brcond.arg3 = arg3.val;
-            // insertCode(tmp);
+            arg1 = factorpop();
+
+            (tmp->args).brcond.arg1 = arg1;
+            (tmp->args).brcond.arg2 = &arg2.val;
+            (tmp->args).brcond.arg3 = &arg3.val;
+            insertCode(tmp);
+
+            retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
+            brpush(&arg2.val);
+            brpush(&arg3.val);
             break;
         case Label:
             // ; <label>:5
-            // l = factorpop();
-            // (tmp->args).label.l = l.val;
-            // insertCode(tmp);
+            l.val = cntr++;
+            (tmp->args).label.l = l.val;
+            insertCode(tmp);
+            lrpush(l.val);
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
@@ -118,8 +157,7 @@ void generateCode(LLVMcommand command) {
             arg1 = factorpop();
             if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
                 retval.type = LOCAL_VAR;
-                retval.val = cntr;
-                cntr++;
+                retval.val = cntr++;
                 (tmp->args).add.arg1 = arg1;
                 (tmp->args).add.arg2 = arg2;
                 (tmp->args).add.retval = retval;
@@ -136,8 +174,7 @@ void generateCode(LLVMcommand command) {
             arg1 = factorpop();
             if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
                 retval.type = LOCAL_VAR;
-                retval.val = cntr;
-                cntr++;
+                retval.val = cntr++;
                 (tmp->args).sub.arg1 = arg1;
                 (tmp->args).sub.arg2 = arg2;
                 (tmp->args).sub.retval = retval;
@@ -154,8 +191,7 @@ void generateCode(LLVMcommand command) {
             arg1 = factorpop();
             if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
                 retval.type = LOCAL_VAR;
-                retval.val = cntr;
-                cntr++;
+                retval.val = cntr++;
                 (tmp->args).mult.arg1 = arg1;
                 (tmp->args).mult.arg2 = arg2;
                 (tmp->args).mult.retval = retval;
@@ -172,8 +208,7 @@ void generateCode(LLVMcommand command) {
             arg1 = factorpop();
             if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
                 retval.type = LOCAL_VAR;
-                retval.val = cntr;
-                cntr++;
+                retval.val = cntr++;
                 (tmp->args).div.arg1 = arg1;
                 (tmp->args).div.arg2 = arg2;
                 (tmp->args).div.retval = retval;
@@ -190,8 +225,7 @@ void generateCode(LLVMcommand command) {
             // arg2 = factorpop();
             // type = factorpop();
             // retval.type = LOCAL_VAR;
-            // retval.val = cntr;
-            // cntr++;
+            // retval.val = cntr++;
             // (tmp->args).icmp.type = type.val;
             // (tmp->args).icmp.arg1 = arg1;
             // (tmp->args).icmp.arg2 = arg2;
@@ -282,7 +316,7 @@ void displayLlvmcodes( LLVMcode *code ){
             // br i1 %4, label %5, label %1
             fprintf(fp, "br i1 ");
             displayFactor( (code->args).brcond.arg1 );
-            fprintf(fp, ", label %%%i, %%%i\n", (code->args).brcond.arg2, (code->args).brcond.arg3);
+            fprintf(fp, ", label %%%i, %%%i\n", *(code->args).brcond.arg2, *(code->args).brcond.arg3);
             break;
         case Label:
             // ; <label>:5

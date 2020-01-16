@@ -50,11 +50,13 @@ program
 				printf("ERROR cannot open\n");
 				exit(1);
 			}
+			printf("[program start]\n");
+			printf("------------------\n");
 		}
 		PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
-			// printf("[program end.]\n");
-			// print_all();
+			printf("[program end.]\n");
+			print_all();
 			displayLlvmfundecl(declhd);
 		}
         ;
@@ -166,11 +168,23 @@ assignment_statement
         ;
 
 if_statement
-        : IF condition THEN statement else_statement
+        : IF condition
+		{
+			generateCode(BrCond);
+		}
+		THEN statement else_statement
+		{
+			generateCode(Label);
+			backpatch();
+		}
         ;
 
 else_statement
-        : ELSE statement
+        : {
+			generateCode(BrCond);
+			generateCode(Label);
+		}
+		ELSE statement
         | /* empty*/
         ;
 
