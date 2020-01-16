@@ -149,7 +149,7 @@ void generateCode(LLVMcommand command) {
             l.val = cntr++;
             (tmp->args).label.l = l.val;
             insertCode(tmp);
-            lrpush(l.val);
+            labelpush(l.val);
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
