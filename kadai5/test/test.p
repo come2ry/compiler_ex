@@ -1,12 +1,12 @@
 program test;
 var i, r;
-procedure
-twice(n);
 begin
-   r := n + n;
-end;
-begin
-   i := 2;
-   twice(i);
-   write(r);
+   i := 0;
+   if i <= 1 then
+      i := 1;
+   else
+   begin
+      i := 2;
+      r :=　3;
+   end
 end.
