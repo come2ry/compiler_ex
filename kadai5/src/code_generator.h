@@ -169,6 +169,7 @@ int labelpop();
 void labelpush(int x);
 void backpatch();
 void generateCode(LLVMcommand command);
+void generateIcmp(Cmptype type);
 void displayFactor(Factor factor);
 void displayLlvmcodes(LLVMcode *code);
 void displayLlvmfundecl(Fundecl *decl);

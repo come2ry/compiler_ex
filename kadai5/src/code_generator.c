@@ -382,7 +382,7 @@ void displayLlvmcodes( LLVMcode *code ){
             // %4 = icmp sgt i32 %3, 0
             displayFactor( (code->args).icmp.retval );
             fprintf(fp, " = icmp ");
-            fprintf(fp, cmp_array[(code->args).icmp.type]);
+            fprintf(fp, "%s", cmp_array[(code->args).icmp.type]);
             fprintf(fp, " i32 ");
             displayFactor( (code->args).icmp.arg1 );
             fprintf(fp, ", ");

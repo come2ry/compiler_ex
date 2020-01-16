@@ -608,9 +608,9 @@ static const yytype_int16 yyrline[] =
      101,   105,   106,   110,   111,   115,   120,   119,   132,   140,
      144,   145,   149,   150,   151,   152,   153,   154,   155,   156,
      157,   161,   172,   171,   183,   183,   188,   192,   197,   196,
-     204,   208,   216,   220,   228,   232,   236,   237,   238,   239,
-     240,   241,   245,   246,   247,   254,   259,   268,   269,   274,
-     282,   283,   291,   295,   311,   319
+     204,   208,   216,   220,   228,   232,   236,   240,   244,   248,
+     252,   256,   263,   264,   265,   272,   277,   286,   287,   292,
+     300,   301,   309,   313,   329,   337
 };
 #endif
 
@@ -1629,55 +1629,103 @@ yyreduce:
 #line 1630 "y.tab.c"
     break;
 
+  case 46:
+#line 237 "parser.y"
+                {
+			generateIcmp(EQ);
+        }
+#line 1638 "y.tab.c"
+    break;
+
+  case 47:
+#line 241 "parser.y"
+                {
+			generateIcmp(NEQ);
+		}
+#line 1646 "y.tab.c"
+    break;
+
+  case 48:
+#line 245 "parser.y"
+                {
+			generateIcmp(LT);
+		}
+#line 1654 "y.tab.c"
+    break;
+
+  case 49:
+#line 249 "parser.y"
+                {
+			generateIcmp(LE);
+		}
+#line 1662 "y.tab.c"
+    break;
+
+  case 50:
+#line 253 "parser.y"
+                {
+			generateIcmp(GT);
+		}
+#line 1670 "y.tab.c"
+    break;
+
+  case 51:
+#line 257 "parser.y"
+                {
+			generateIcmp(GE);
+		}
+#line 1678 "y.tab.c"
+    break;
+
   case 54:
-#line 248 "parser.y"
+#line 266 "parser.y"
                 {
 			Factor f;
 			f = factorpop();
 			f.val = -f.val;
 			factorpush(f);
 		}
-#line 1641 "y.tab.c"
+#line 1689 "y.tab.c"
     break;
 
   case 55:
-#line 255 "parser.y"
+#line 273 "parser.y"
         {
 			// printf("[ex PLUS term]\n");
 			generateCode(Add);
         }
-#line 1650 "y.tab.c"
+#line 1698 "y.tab.c"
     break;
 
   case 56:
-#line 260 "parser.y"
+#line 278 "parser.y"
         {
 			// printf("[ex Sub term]\n");
 			generateCode(Sub);
         }
-#line 1659 "y.tab.c"
+#line 1707 "y.tab.c"
     break;
 
   case 58:
-#line 270 "parser.y"
+#line 288 "parser.y"
                 {
 			// printf("[term Mult factor]\n");
 			generateCode(Mult);
 		}
-#line 1668 "y.tab.c"
+#line 1716 "y.tab.c"
     break;
 
   case 59:
-#line 275 "parser.y"
+#line 293 "parser.y"
                 {
 			// printf("[term Div factor]\n");
 			generateCode(Div);
 		}
-#line 1677 "y.tab.c"
+#line 1725 "y.tab.c"
     break;
 
   case 61:
-#line 284 "parser.y"
+#line 302 "parser.y"
                 {
 			// printf("[factor]\n");
 			Factor f;
@@ -1685,11 +1733,11 @@ yyreduce:
 			f.val = (yyvsp[0].num);
 			factorpush(f);
 		}
-#line 1689 "y.tab.c"
+#line 1737 "y.tab.c"
     break;
 
   case 63:
-#line 296 "parser.y"
+#line 314 "parser.y"
                 {
 			// printf("[var_name %s %d]\n", $1, flag);
 
@@ -1697,11 +1745,11 @@ yyreduce:
 			factorpush(f);
 			generateCode(Load);
 		}
-#line 1701 "y.tab.c"
+#line 1749 "y.tab.c"
     break;
 
   case 64:
-#line 312 "parser.y"
+#line 330 "parser.y"
                 {
 			// printf("[id_list]\n");
 			insert((yyvsp[0].ident), flag);
@@ -1709,11 +1757,11 @@ yyreduce:
 				generateCode(Alloca);
 			}
 		}
-#line 1713 "y.tab.c"
+#line 1761 "y.tab.c"
     break;
 
   case 65:
-#line 320 "parser.y"
+#line 338 "parser.y"
                 {
 			// printf("[id_list]\n");
 			insert((yyvsp[0].ident), flag);
@@ -1721,11 +1769,11 @@ yyreduce:
 				generateCode(Alloca);
 			};
 		}
-#line 1725 "y.tab.c"
+#line 1773 "y.tab.c"
     break;
 
 
-#line 1729 "y.tab.c"
+#line 1777 "y.tab.c"
 
       default: break;
     }
@@ -1957,7 +2005,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 330 "parser.y"
+#line 348 "parser.y"
 
 void yyerror(char *s)
 {
