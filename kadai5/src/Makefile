@@ -18,4 +18,4 @@ code_generator.o: code_generator.h code_generator.c
 	$(CC) -c code_generator.c
 
 clean:
-	rm -f *.o *.yy.*
+	rm -f *.o y.tab.*

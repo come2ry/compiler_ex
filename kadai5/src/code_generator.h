@@ -165,7 +165,7 @@ int *brpop();
 void brpush(int *x);
 int labelpop();
 void labelpush(int x);
-void backpatch();
+// void backpatch();
 void generateCode(LLVMcommand command);
 void generateIcmp(Cmptype type);
 void displayFactor(Factor factor);

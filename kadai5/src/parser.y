@@ -13,6 +13,7 @@ extern int yylineno;
 extern char *yytext;
 extern int yylex(void);
 void yyerror(char *s);
+extern int cntr;
 
 Scope flag = GLOBAL_VAR;
 char *fname = "result.ll";
@@ -180,7 +181,6 @@ if_statement
 		statement else_statement
 		{
 			generateCode(Label);
-			backpatch();
 		}
         ;
 
@@ -196,20 +196,28 @@ else_statement
 while_statement
         : WHILE 
 		{
+			generateCode(BrUncond);
+			*(codetl->args).bruncond.arg1 = labelpop();
 			labelpush(cntr);
 			generateCode(Label);
 		}
 		condition
 		{
 			generateCode(BrCond);
-			*(codetl->ags).brcond.arg2 = cntr;
-			brpush((codetl->ags).brcond.arg3);
+			printf("%d\n", codetl->command);
+			*((codetl->args).brcond.arg2) = cntr;
+			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+			// printf("%d\n", *(codetl->args).brcond.arg2);
+			printf("%d\n", *((codetl->args).brcond.arg2));
+			printf("%d\n", cntr);
+			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+			brpush((codetl->args).brcond.arg3);
 			generateCode(Label);
 		}
 		DO statement
 		{
 			generateCode(BrUncond);
-			*(codetl->ags).bruncond.arg1 = labelpop();
+			*((codetl->args).bruncond.arg1) = labelpop();
 			int *bradr = brpop();
 			*bradr = cntr;
 			generateCode(Label);
@@ -259,27 +267,27 @@ null_statement
 condition
         : expression EQ expression
 		{
-			generateIcmp(EQ);
+			generateIcmp(EQUAL);
         }
         | expression NEQ expression
 		{
-			generateIcmp(NEQ);
+			generateIcmp(NE);
 		}
         | expression LT expression
 		{
-			generateIcmp(LT);
+			generateIcmp(SLT);
 		}
         | expression LE expression
 		{
-			generateIcmp(LE);
+			generateIcmp(SLE);
 		}
         | expression GT expression
 		{
-			generateIcmp(GT);
+			generateIcmp(SGT);
 		}
         | expression GE expression
 		{
-			generateIcmp(GE);
+			generateIcmp(SGE);
 		}
         ;
 
@@ -364,7 +372,7 @@ id_list
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
-			};
+			}
 		}
         ;
 

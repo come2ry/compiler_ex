@@ -11,7 +11,7 @@ Fundecl *declhd = NULL;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
 Fundecl *decltl = NULL;
 
-static int cntr = 0;
+int cntr = 0;
 extern FILE *fp;
 BrAddstack brstack = {{}, 0};
 Labelstack lstack = {{}, 0};
@@ -74,14 +74,6 @@ void labelpush(int x) {
     return;
 }
 
-void backpatch() {
-    while (brstack.top > 0) {
-        int *bradr = brpop();
-        int label = labelpop();
-        *bradr = label;
-    }
-    return;
-}
 
 void displayfstack() {
     int i;
@@ -148,7 +140,8 @@ void generateCode(LLVMcommand command) {
             break;
         case BrUncond:
             // br label %2
-            (tmp->args).bruncond.arg1 = &arg1.val;
+            // (tmp->args).bruncond.arg1 = (int *)malloc(sizeof(int));
+            // (tmp->args).bruncond.arg1 = &arg1.val;
             insertCode(tmp);
             break;
         case BrCond:
@@ -158,8 +151,10 @@ void generateCode(LLVMcommand command) {
             arg1 = factorpop();
 
             (tmp->args).brcond.arg1 = arg1;
-            (tmp->args).brcond.arg2 = &arg2.val;
-            (tmp->args).brcond.arg3 = &arg3.val;
+            // (tmp->args).brcond.arg2 = (int *)malloc(sizeof(int));
+            // (tmp->args).brcond.arg2 = &arg2.val;
+            // (tmp->args).brcond.arg3 = (int *)malloc(sizeof(int));
+            // (tmp->args).brcond.arg3 = &arg3.val;
             insertCode(tmp);
 
             retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
@@ -167,11 +162,11 @@ void generateCode(LLVMcommand command) {
             // brpush(&arg2.val);
             // brpush(&arg3.val);
             break;
-        // case Label:
-        //     // ; <label>:5
-        //     (tmp->args).label.l = cntr++;
-        //     insertCode(tmp);
-        //     break;
+        case Label:
+            // ; <label>:5
+            (tmp->args).label.l = cntr++;
+            insertCode(tmp);
+            break;
         case Add:
             // %8 = add nsw i32 %6, %7
             arg2 = factorpop();
@@ -300,7 +295,7 @@ void displayFactor( Factor factor ){
 void displayLlvmcodes( LLVMcode *code ){
     if( code == NULL )
         return;
-    fprintf(fp, "  ");
+
     switch( code->command ){
         // case Common:
         //     // @n = common global i32 0, align 4
@@ -311,11 +306,13 @@ void displayLlvmcodes( LLVMcode *code ){
         //     break;
         case Alloca:
             // %1 = alloca i32, align 4
+            fprintf(fp, "  ");
             displayFactor( (code->args).alloca.retval );
             fprintf(fp, " = alloca i32, align 4\n");
             break;
         case Store:
             // store i32 10, i32* @n, align
+            fprintf(fp, "  ");
             fprintf(fp, "store i32 ");
             displayFactor( (code->args).store.arg1 );
             fprintf(fp, ", i32* ");
@@ -324,6 +321,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Load:
             // %6 = load i32, i32* @sum, align
+            fprintf(fp, "  ");
             displayFactor( (code->args).load.retval );
             fprintf(fp, " = load i32, i32* ");
             displayFactor( (code->args).load.arg1 );
@@ -331,20 +329,23 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case BrUncond:
             // br label %2
-            fprintf(fp, "br label %%%i\n", (code->args).bruncond.arg1 );
+            fprintf(fp, "  ");
+            fprintf(fp, "br label %%%d\n", *(code->args).bruncond.arg1 );
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
+            fprintf(fp, "  ");
             fprintf(fp, "br i1 ");
             displayFactor( (code->args).brcond.arg1 );
-            fprintf(fp, ", label %%%i, %%%i\n", *(code->args).brcond.arg2, *(code->args).brcond.arg3);
+            fprintf(fp, ", label %%%d, label %%%d\n", *((code->args).brcond.arg2), *((code->args).brcond.arg3));
             break;
         case Label:
             // ; <label>:5
-            fprintf(fp, "; <label>:%i\n", (code->args).label.l );
+            fprintf(fp, "%i:\n", (code->args).label.l );
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
+            fprintf(fp, "  ");
             displayFactor( (code->args).add.retval );
             fprintf(fp, " = add nsw i32 ");
             displayFactor( (code->args).add.arg1 );
@@ -354,6 +355,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Sub:
             // %10 = sub nsw i32 %9, 1
+            fprintf(fp, "  ");
             displayFactor( (code->args).sub.retval );
             fprintf(fp, " = sub nsw i32 ");
             displayFactor( (code->args).sub.arg1 );
@@ -363,6 +365,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Mult:
             // %5 = mul nsw i32 %4, 2
+            fprintf(fp, "  ");
             displayFactor( (code->args).add.retval );
             fprintf(fp, " = mul nsw i32 ");
             displayFactor( (code->args).add.arg1 );
@@ -372,6 +375,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Div:
             // %3 = sdiv i32 %2, 2
+            fprintf(fp, "  ");
             displayFactor( (code->args).sub.retval );
             fprintf(fp, " = sdiv i32 ");
             displayFactor( (code->args).sub.arg1 );
@@ -381,9 +385,11 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Icmp:
             // %4 = icmp sgt i32 %3, 0
+            fprintf(fp, "  ");
             displayFactor( (code->args).icmp.retval );
             fprintf(fp, " = icmp ");
             fprintf(fp, "%s", cmp_array[(code->args).icmp.type]);
+            // fprintf(fp, "%d", (code->args).icmp.type);
             fprintf(fp, " i32 ");
             displayFactor( (code->args).icmp.arg1 );
             fprintf(fp, ", ");
@@ -392,6 +398,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case Ret:
             // ret i32 0
+            fprintf(fp, "  ");
             fprintf(fp, "ret i32 ");
             displayFactor( (code->args).ret.arg1 );
             fprintf(fp, "\n");
