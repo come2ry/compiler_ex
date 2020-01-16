@@ -64,13 +64,13 @@ typedef struct llvmcode
         } load;
         struct
         { /* br     */
-            int *arg1;
+            int arg1;
         } bruncond;
         struct
         { /* brc    */
             Factor arg1;
-            int *arg2;
-            int *arg3;
+            int arg2;
+            int arg3;
         } brcond;
         struct
         { /* label  */
@@ -151,7 +151,7 @@ typedef struct
 
 typedef struct
 {
-    int *element[100];
+    LLVMcode *element[100];
     unsigned int top;
 } BrAddstack;
 
@@ -161,8 +161,8 @@ Labelstack lstack;
 void init_fstack();
 Factor factorpop();
 void factorpush(Factor x);
-int *brpop();
-void brpush(int *x);
+LLVMcode *brpop();
+void brpush(LLVMcode *x);
 int labelpop();
 void labelpush(int x);
 // void backpatch();

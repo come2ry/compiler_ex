@@ -48,14 +48,14 @@ void factorpush(Factor x)
     return;
 }
 
-int *brpop() {
-    int *tmp;
+LLVMcode *brpop() {
+    LLVMcode *tmp;
     tmp = brstack.element[brstack.top];
     brstack.top--;
     return tmp;
 }
 
-void brpush(int *x) {
+void brpush(LLVMcode *x) {
     brstack.top++;
     brstack.element[brstack.top] = x;
     return;
