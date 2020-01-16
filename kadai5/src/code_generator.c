@@ -13,7 +13,8 @@ Fundecl *decltl = NULL;
 
 static int cntr = 0;
 extern FILE *fp;
-
+BrAddstack bstack = {{}, 0};
+Labelstack lstack = {{}, 0};
 
 char cmp_array[][4] = {
     "eq",

@@ -156,8 +156,8 @@ typedef struct
     unsigned int top;
 } Labelstack;
 
-BrAddstack bstack = {{}, 0};
-Labelstack lstack = {{}, 0};
+BrAddstack bstack;
+Labelstack lstack;
 
 
 void init_fstack();
