@@ -234,11 +234,30 @@ null_statement
 
 condition
         : expression EQ expression
+		{
+			generateIcmp(EQ);
+        }
+		}
         | expression NEQ expression
+		{
+			generateIcmp(NEQ);
+		}
         | expression LT expression
+		{
+			generateIcmp(LT);
+		}
         | expression LE expression
+		{
+			generateIcmp(LE);
+		}
         | expression GT expression
+		{
+			generateIcmp(GT);
+		}
         | expression GE expression
+		{
+			generateIcmp(GE);
+		}
         ;
 
 expression

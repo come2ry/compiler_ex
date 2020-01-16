@@ -92,12 +92,33 @@ void displayfstack() {
     fprintf(fp, "\n");
 }
 
+void generateIcmp(Cmptype type) {
+    LLVMcode *tmp;             /* 生成した命令へのポインタ */
+    tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
+    tmp->next = NULL;          /* 次の命令へのポインタを初期化 */
+    tmp->command = Icmp;        /* 命令の種類を加算に設定 */
+    Factor arg1, arg2, retval; /* 結果 */
+
+    // %4 = icmp sgt i32 %3, 0
+    arg2 = factorpop();
+    arg1 = factorpop();
+    retval.type = LOCAL_VAR;
+    retval.val = cntr++;
+    (tmp->args).icmp.type = type;
+    (tmp->args).icmp.arg1 = arg1;
+    (tmp->args).icmp.arg2 = arg2;
+    (tmp->args).icmp.retval = retval;
+    insertCode(tmp);
+    factorpush( retval );
+}
+
+
 void generateCode(LLVMcommand command) {
     LLVMcode *tmp;             /* 生成した命令へのポインタ */
     tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
     tmp->next = NULL;          /* 次の命令へのポインタを初期化 */
     tmp->command = command;        /* 命令の種類を加算に設定 */
-    Factor arg1, arg2, arg3, retval, l, type; /* 結果 */
+    Factor arg1, arg2, arg3, retval; /* 結果 */
 
     switch( command ){
         case Alloca:
@@ -147,10 +168,9 @@ void generateCode(LLVMcommand command) {
             break;
         case Label:
             // ; <label>:5
-            l.val = cntr++;
-            (tmp->args).label.l = l.val;
+            labelpush(cntr);
+            (tmp->args).label.l = cntr++;
             insertCode(tmp);
-            labelpush(l.val);
             break;
         case Add:
             // %8 = add nsw i32 %6, %7
@@ -220,20 +240,19 @@ void generateCode(LLVMcommand command) {
             }
             factorpush( retval );
             break;
-        case Icmp:
-            // %4 = icmp sgt i32 %3, 0
-            // arg1 = factorpop();
-            // arg2 = factorpop();
-            // type = factorpop();
-            // retval.type = LOCAL_VAR;
-            // retval.val = cntr++;
-            // (tmp->args).icmp.type = type.val;
-            // (tmp->args).icmp.arg1 = arg1;
-            // (tmp->args).icmp.arg2 = arg2;
-            // (tmp->args).icmp.retval = retval;
-            // insertCode(tmp);
-            // factorpush( retval );
-            break;
+        // case Icmp:
+        //     // %4 = icmp sgt i32 %3, 0
+        //     arg1 = factorpop();
+        //     arg2 = factorpop();
+        //     retval.type = LOCAL_VAR;
+        //     retval.val = cntr++;
+        //     (tmp->args).icmp.type = type.val;
+        //     (tmp->args).icmp.arg1 = arg1;
+        //     (tmp->args).icmp.arg2 = arg2;
+        //     (tmp->args).icmp.retval = retval;
+        //     insertCode(tmp);
+        //     factorpush( retval );
+        //     break;
         case Ret:
             // ret i32 0
             arg1 = factorpop();
@@ -360,15 +379,15 @@ void displayLlvmcodes( LLVMcode *code ){
             fprintf(fp, "\n");
             break;
         case Icmp:
-            // // %4 = icmp sgt i32 %3, 0
-            // displayFactor( (code->args).icmp.retval );
-            // fprintf(fp, " = icmp ");
-            // fprintf(fp, cmp_array[(code->args).icmp.type]);
-            // fprintf(fp, " i32 ");
-            // displayFactor( (code->args).icmp.arg1 );
-            // fprintf(fp, ", ");
-            // displayFactor( (code->args).icmp.arg2 );
-            // fprintf(fp, "\n");
+            // %4 = icmp sgt i32 %3, 0
+            displayFactor( (code->args).icmp.retval );
+            fprintf(fp, " = icmp ");
+            fprintf(fp, cmp_array[(code->args).icmp.type]);
+            fprintf(fp, " i32 ");
+            displayFactor( (code->args).icmp.arg1 );
+            fprintf(fp, ", ");
+            displayFactor( (code->args).icmp.arg2 );
+            fprintf(fp, "\n");
             break;
         case Ret:
             // ret i32 0
