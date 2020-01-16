@@ -172,7 +172,12 @@ if_statement
 		{
 			generateCode(BrCond);
 		}
-		THEN statement else_statement
+		THEN
+		{
+			labelpush(cntr);
+			generateCode(Label);
+		}
+		statement else_statement
 		{
 			generateCode(Label);
 			backpatch();
@@ -189,7 +194,26 @@ else_statement
         ;
 
 while_statement
-        : WHILE condition DO statement
+        : WHILE 
+		{
+			labelpush(cntr);
+			generateCode(Label);
+		}
+		condition
+		{
+			generateCode(BrCond);
+			*(codetl->ags).brcond.arg2 = cntr;
+			brpush((codetl->ags).brcond.arg3);
+			generateCode(Label);
+		}
+		DO statement
+		{
+			generateCode(BrUncond);
+			*(codetl->ags).bruncond.arg1 = labelpop();
+			int *bradr = brpop();
+			*bradr = cntr;
+			generateCode(Label);
+		}
         ;
 
 for_statement

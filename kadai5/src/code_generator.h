@@ -64,7 +64,7 @@ typedef struct llvmcode
         } load;
         struct
         { /* br     */
-            int arg1;
+            int *arg1;
         } bruncond;
         struct
         { /* brc    */
@@ -143,6 +143,11 @@ Fundecl *declhd;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
 Fundecl *decltl;
 
+typedef struct
+{
+    int element[100];
+    unsigned int top;
+} Labelstack;
 
 typedef struct
 {
@@ -150,15 +155,8 @@ typedef struct
     unsigned int top;
 } BrAddstack;
 
-typedef struct
-{
-    int element[100];
-    unsigned int top;
-} Labelstack;
-
-BrAddstack bstack;
+BrAddstack brstack;
 Labelstack lstack;
-
 
 void init_fstack();
 Factor factorpop();

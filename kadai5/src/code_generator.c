@@ -13,7 +13,7 @@ Fundecl *decltl = NULL;
 
 static int cntr = 0;
 extern FILE *fp;
-BrAddstack bstack = {{}, 0};
+BrAddstack brstack = {{}, 0};
 Labelstack lstack = {{}, 0};
 
 char cmp_array[][4] = {
@@ -50,14 +50,14 @@ void factorpush(Factor x)
 
 int *brpop() {
     int *tmp;
-    tmp = bstack.element[bstack.top];
-    bstack.top--;
+    tmp = brstack.element[brstack.top];
+    brstack.top--;
     return tmp;
 }
 
 void brpush(int *x) {
-    bstack.top++;
-    bstack.element[bstack.top] = x;
+    brstack.top++;
+    brstack.element[brstack.top] = x;
     return;
 }
 
@@ -75,7 +75,7 @@ void labelpush(int x) {
 }
 
 void backpatch() {
-    while (bstack.top > 0) {
+    while (brstack.top > 0) {
         int *bradr = brpop();
         int label = labelpop();
         *bradr = label;
@@ -148,8 +148,8 @@ void generateCode(LLVMcommand command) {
             break;
         case BrUncond:
             // br label %2
-            // (tmp->args).bruncond.arg1 = arg1.val;
-            // insertCode(tmp);
+            (tmp->args).bruncond.arg1 = &arg1.val;
+            insertCode(tmp);
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
@@ -163,15 +163,15 @@ void generateCode(LLVMcommand command) {
             insertCode(tmp);
 
             retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
-            brpush(&arg2.val);
-            brpush(&arg3.val);
+
+            // brpush(&arg2.val);
+            // brpush(&arg3.val);
             break;
-        case Label:
-            // ; <label>:5
-            labelpush(cntr);
-            (tmp->args).label.l = cntr++;
-            insertCode(tmp);
-            break;
+        // case Label:
+        //     // ; <label>:5
+        //     (tmp->args).label.l = cntr++;
+        //     insertCode(tmp);
+        //     break;
         case Add:
             // %8 = add nsw i32 %6, %7
             arg2 = factorpop();
@@ -263,6 +263,7 @@ void generateCode(LLVMcommand command) {
             break;
     }
 }
+
 
 void insertCode(LLVMcode *tmp) {
     if( codetl == NULL ){ /* 解析中の関数の最初の命令の場合 */
