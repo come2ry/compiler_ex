@@ -237,7 +237,6 @@ condition
 		{
 			generateIcmp(EQ);
         }
-		}
         | expression NEQ expression
 		{
 			generateIcmp(NEQ);
