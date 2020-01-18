@@ -74,11 +74,10 @@ outblock
         }
 		statement
 		{
-			// displayfstack();
-			// Factor f;
-			// f.type = CONSTANT;
-			// f.val = 0;
-			// factorpush(f);
+			Factor f;
+			f.type = CONSTANT;
+			f.val = 0;
+			factorpush(f);
 			generateCode(Ret);
 		}
         ;
