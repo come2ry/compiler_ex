@@ -74,6 +74,7 @@ outblock
         }
 		statement
 		{
+			displayfstack();
 			// Factor f;
 			// f.type = CONSTANT;
 			// f.val = 0;
