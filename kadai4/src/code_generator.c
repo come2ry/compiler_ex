@@ -3,13 +3,13 @@
 #include "symbol_table.h"
 #include "code_generator.h"
 
-*codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
-*codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
+codehd = NULL; /* 命令列の先頭のアドレスを保持するポインタ */
+codetl = NULL; /* 命令列の末尾のアドレスを保持するポインタ */
 
 /* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-*declhd = NULL;
+declhd = NULL;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-*decltl = NULL;
+decltl = NULL;
 
 static int cntr = 0;
 extern FILE *fp;
