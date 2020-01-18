@@ -35,7 +35,7 @@ Factor factorpop()
     Factor tmp;
     tmp = fstack.element[fstack.top];
     fstack.top--;
-    // displayfstack();
+    displayfstack();
     return tmp;
 }
 
@@ -43,7 +43,7 @@ void factorpush(Factor x)
 {
     fstack.top++;
     fstack.element[fstack.top] = x;
-    // displayfstack();
+    displayfstack();
     return;
 }
 
