@@ -176,6 +176,6 @@ void insertDecl(char *fname, unsigned arity, Factor *args);
 Factor generateFactor(char *name);
 void displayGlobalVar();
 void insertCode(LLVMcode *tmp);
-void displayfstack();
+// void displayfstack();
 
 #endif

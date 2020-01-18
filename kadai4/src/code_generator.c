@@ -35,7 +35,7 @@ Factor factorpop()
     Factor tmp;
     tmp = fstack.element[fstack.top];
     fstack.top--;
-    displayfstack();
+    // displayfstack();
     return tmp;
 }
 
@@ -43,7 +43,7 @@ void factorpush(Factor x)
 {
     fstack.top++;
     fstack.element[fstack.top] = x;
-    displayfstack();
+    // displayfstack();
     return;
 }
 
@@ -295,7 +295,7 @@ void displayLlvmcodes( LLVMcode *code ){
             displayFactor( (code->args).add.arg1 );
             fprintf(fp, ", ");
             displayFactor( (code->args).add.arg2 );
-            fprintf(fp, "\n");
+            fprintf(fp, ", align 4\n");
             break;
         case Sub:
             // %10 = sub nsw i32 %9, 1
@@ -304,7 +304,7 @@ void displayLlvmcodes( LLVMcode *code ){
             displayFactor( (code->args).sub.arg1 );
             fprintf(fp, ", ");
             displayFactor( (code->args).sub.arg2 );
-            fprintf(fp, "\n");
+            fprintf(fp, ", align 4\n");
             break;
         case Mult:
             // %5 = mul nsw i32 %4, 2
