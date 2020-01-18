@@ -74,9 +74,9 @@ outblock
         }
 		statement
 		{
-			Factor f;
-			f.type = CONSTANT;
-			f.val = 0;
+			// Factor f;
+			// f.type = CONSTANT;
+			// f.val = 0;
 			factorpush(f);
 			generateCode(Ret);
 		}
