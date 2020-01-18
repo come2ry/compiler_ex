@@ -77,7 +77,7 @@ outblock
 			// Factor f;
 			// f.type = CONSTANT;
 			// f.val = 0;
-			factorpush(f);
+			// factorpush(f);
 			generateCode(Ret);
 		}
         ;
