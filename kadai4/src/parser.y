@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include "symbol_table.h"
-#include "code_generator.h"
+// #include "code_generator.h"
 
 extern int yylineno;
 extern char *yytext;
