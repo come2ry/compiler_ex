@@ -7,16 +7,16 @@
 
 #include <stdio.h>
 #include "symbol_table.h"
-// #include "code_generator.h"
+#include "code_generator.h"
 
 extern int yylineno;
 extern char *yytext;
 extern int yylex(void);
 void yyerror(char *s);
-// extern LLVMcode *codehd;
-// extern LLVMcode *codetl;
-// extern Fundecl *declhd;
-// extern Fundecl *decltl;
+extern LLVMcode *codehd;
+extern LLVMcode *codetl;
+extern Fundecl *declhd;
+extern Fundecl *decltl;
 
 Scope flag = GLOBAL_VAR;
 char *fname = "result.ll";

@@ -2,13 +2,13 @@
 #define CODE_DATE
 #include "data.h"
 
-extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
-extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
+LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
+LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
 
 /* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-extern Fundecl *declhd;
+Fundecl *declhd;
 /* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-extern Fundecl *decltl;
+Fundecl *decltl;
 
 
 /* 変数もしくは定数の型 */
