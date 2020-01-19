@@ -54,6 +54,7 @@ program
 				printf("ERROR cannot open\n");
 				exit(1);
 			}
+			init_fstack();
 		}
 		PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
@@ -68,7 +69,6 @@ outblock
         {
 			// printf("[outblock]\n");
 			insertDecl("main", 0, NULL);
-			init_fstack();
 			Factor f;
 			f.type = CONSTANT;
 			f.val = 0;
