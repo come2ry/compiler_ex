@@ -58,8 +58,6 @@ program
 		}
 		PROGRAM IDENT SEMICOLON outblock PERIOD
 		{
-			// printf("[program end.]\n");
-			// print_all();
 			displayLlvmfundecl(declhd);
 		}
         ;
@@ -67,7 +65,6 @@ program
 outblock
         : var_decl_part subprog_decl_part
         {
-			// printf("[outblock]\n");
 			insertDecl("main", 0, NULL);
 			Factor f;
 			f.type = CONSTANT;
@@ -124,7 +121,6 @@ proc_decl
 		}
 		inblock
 		{
-			// printf("[proc_decl]\n");
 			delete();
 			flag = GLOBAL_VAR;
 		}
@@ -162,8 +158,6 @@ statement
 assignment_statement
         : IDENT ASSIGN expression
 		{
-			// printf("[assignment_statement %s %d]\n", $1, flag);
-
 			factorpush(generateFactor($1));
 			generateCode(Store);
 		}
@@ -185,7 +179,6 @@ while_statement
 for_statement
         : FOR IDENT
 		{
-			// printf("[for_statement %s %d]\n", $2, flag);
 			lookup($2);
 		} ASSIGN expression TO expression DO statement
         ;
@@ -197,7 +190,6 @@ proc_call_statement
 proc_call_name
         : IDENT
 		{
-			// printf("[proc_call_name %s %d]\n", $1, flag);
 			lookup($1);
 		}
         ;
@@ -209,7 +201,6 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN
 		{
-			// printf("[read_statement %s %d]\n", $3, flag);
 			lookup($3);
 		}
         ;
@@ -243,12 +234,10 @@ expression
 		}
         | expression PLUS term
         {
-			// printf("[ex PLUS term]\n");
 			generateCode(Add);
         }
         | expression MINUS term
         {
-			// printf("[ex Sub term]\n");
 			generateCode(Sub);
         }
         ;
@@ -258,12 +247,10 @@ term
         : factor
         | term MULT factor
 		{
-			// printf("[term Mult factor]\n");
 			generateCode(Mult);
 		}
         | term DIV factor
 		{
-			// printf("[term Div factor]\n");
 			generateCode(Div);
 		}
         ;
@@ -272,7 +259,6 @@ factor
         : var_name
         | NUMBER
 		{
-			// printf("[factor]\n");
 			Factor f;
 			f.type = CONSTANT;
 			f.val = $1;
@@ -284,8 +270,6 @@ factor
 var_name
         : IDENT
 		{
-			// printf("[var_name %s %d]\n", $1, flag);
-
 			Factor f = generateFactor($1);
 			factorpush(f);
 			generateCode(Load);
@@ -300,7 +284,6 @@ var_name
 id_list
         : IDENT
 		{
-			// printf("[id_list]\n");
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
@@ -308,7 +291,6 @@ id_list
 		}
         | id_list COMMA IDENT
 		{
-			// printf("[id_list]\n");
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
