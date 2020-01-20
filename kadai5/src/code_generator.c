@@ -115,7 +115,7 @@ void generateCode(LLVMcommand command) {
     switch( command ){
         case Alloca:
             retval.type = LOCAL_VAR;   /* 結果を格納するレジスタは局所 */
-            retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
+            retval.val = cntr++;       /* 新規のレジスタ番号を取得 */
             (tmp->args).alloca.retval = retval; /* 返り場所のレジスタを指定 */
             insertCode(tmp);
             factorpush( retval ); /* 関数の返り場所をスタックにプッシュ */
@@ -143,6 +143,7 @@ void generateCode(LLVMcommand command) {
             // (tmp->args).bruncond.arg1 = (int *)malloc(sizeof(int));
             // (tmp->args).bruncond.arg1 = &arg1.val;
             insertCode(tmp);
+            brpush(tmp);
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
@@ -157,10 +158,10 @@ void generateCode(LLVMcommand command) {
             // (tmp->args).brcond.arg3 = &arg3.val;
             insertCode(tmp);
 
-            retval.val = cntr++;         /* 新規のレジスタ番号を取得 */
 
             // brpush(&arg2.val);
             // brpush(&arg3.val);
+            brpush(tmp);
             break;
         case Label:
             // ; <label>:5
@@ -297,13 +298,6 @@ void displayLlvmcodes( LLVMcode *code ){
         return;
 
     switch( code->command ){
-        // case Common:
-        //     // @n = common global i32 0, align 4
-        //     displayFactor( (code->args).common.retval );
-        //     fprintf(fp, " = common global i32 ");
-        //     displayFactor( (code->args).common.arg1 );
-        //     fprintf(fp, ", align 4\n");
-        //     break;
         case Alloca:
             // %1 = alloca i32, align 4
             fprintf(fp, "  ");
@@ -330,18 +324,18 @@ void displayLlvmcodes( LLVMcode *code ){
         case BrUncond:
             // br label %2
             fprintf(fp, "  ");
-            fprintf(fp, "br label %%%d\n", *(code->args).bruncond.arg1 );
+            fprintf(fp, "br label %%%d\n", (code->args).label.l );
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
             fprintf(fp, "  ");
             fprintf(fp, "br i1 ");
             displayFactor( (code->args).brcond.arg1 );
-            fprintf(fp, ", label %%%d, label %%%d\n", *((code->args).brcond.arg2), *((code->args).brcond.arg3));
+            fprintf(fp, ", label %%%d, label %%%d\n", (code->args).brcond.arg2, (code->args).brcond.arg3);
             break;
         case Label:
             // ; <label>:5
-            fprintf(fp, "%i:\n", (code->args).label.l );
+            fprintf(fp, "\n%i:\n", (code->args).label.l );
             break;
         case Add:
             // %8 = add nsw i32 %6, %7

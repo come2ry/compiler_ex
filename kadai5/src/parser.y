@@ -196,31 +196,32 @@ else_statement
 while_statement
         : WHILE 
 		{
-			generateCode(BrUncond);
-			*(codetl->args).bruncond.arg1 = labelpop();
-			labelpush(cntr);
-			generateCode(Label);
+			generateCode(BrUncond); // Bru0作成
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = cntr; // Bru0完成
+			labelpush(cntr); // WHILEのスタートラベルをpush
+			generateCode(Label); // WHILEのスタートラベル
 		}
 		condition
 		{
-			generateCode(BrCond);
+			generateCode(BrCond); // Br1作成
 			printf("%d\n", codetl->command);
-			*((codetl->args).brcond.arg2) = cntr;
-			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-			// printf("%d\n", *(codetl->args).brcond.arg2);
-			printf("%d\n", *((codetl->args).brcond.arg2));
-			printf("%d\n", cntr);
-			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-			brpush((codetl->args).brcond.arg3);
-			generateCode(Label);
+			LLVMcode *tmp = brpop();
+			(tmp->args).brcond.arg2 = cntr; // Br1 True時即埋め
+			brpush(tmp); // Br1 Fasle時 push
 		}
-		DO statement
+		DO
 		{
-			generateCode(BrUncond);
-			*((codetl->args).bruncond.arg1) = labelpop();
-			int *bradr = brpop();
-			*bradr = cntr;
-			generateCode(Label);
+			generateCode(Label); // 真ラベル作成
+		}
+		statement
+		{
+			generateCode(BrUncond); // スタートに戻るためのBru1作成
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = labelpop(); // WHILEのスタートラベルをpopしてBru1即埋め
+			tmp = brpop();
+			(tmp->args).brcond.arg3 = cntr; // Br1 Fasle時popして偽ラベル埋める
+			generateCode(Label); // 偽ラベル作成
 		}
         ;
 
@@ -332,7 +333,6 @@ factor
         : var_name
         | NUMBER
 		{
-			// printf("[factor]\n");
 			Factor f;
 			f.type = CONSTANT;
 			f.val = $1;
