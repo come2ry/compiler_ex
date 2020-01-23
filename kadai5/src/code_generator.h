@@ -25,7 +25,8 @@ typedef enum
     Mult,     /* mult   */
     Div,      /* div    */
     Icmp,     /* icmp   */
-    Ret       /* ret    */
+    Ret,       /* ret    */
+    Call
 } LLVMcommand;
 
 /* 比較演算子の種類 */
@@ -38,6 +39,21 @@ typedef enum
     SLT,   /* slt （<，符号付き） */
     SLE    /* sle （<=，符号付き）*/
 } Cmptype;
+
+/* 型の種類 */
+typedef enum
+{
+    I8,
+    I16,
+    I32,
+    I64,
+    I128,
+    I256,
+    I512,
+    I1024,
+    I2020, // オリンピック
+    VOID
+} Type;
 
 typedef struct llvmcode
 {
@@ -109,8 +125,16 @@ typedef struct llvmcode
         } icmp;
         struct
         { /* ret    */
+            Type rtype;
             Factor arg1;
         } ret;
+        struct
+        { /* call */
+            Type rtype;
+            Factor fname;
+            Factor args[10];
+            Factor retval;
+        } call;
     } args;
     /* 次の命令へのポインタ */
     struct llvmcode *next;
@@ -168,6 +192,7 @@ void labelpush(int x);
 // void backpatch();
 void generateCode(LLVMcommand command);
 void generateIcmp(Cmptype type);
+void generateCall(Type rtype, Factor fname, Factor args[10]);
 void displayFactor(Factor factor);
 void displayLlvmcodes(LLVMcode *code);
 void displayLlvmfundecl(Fundecl *decl);

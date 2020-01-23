@@ -59,11 +59,17 @@ program
 			printf("[program end.]\n");
 			print_all();
 			displayLlvmfundecl(declhd);
+			fprintf(fp, "declare dso_local i32 @scanf(i8*, ...)\n");
+    		fprintf(fp, "declare dso_local i32 @printf(i8*, ...)\n");
 		}
         ;
 
 outblock
-        : var_decl_part subprog_decl_part
+        : var_decl_part 
+		{
+			displayGlobalVar();
+		}
+		subprog_decl_part
         {
 			// printf("[outblock]\n");
 			insertDecl("main", 0, NULL);
@@ -78,6 +84,7 @@ outblock
 		statement
 		{
 			Factor f;
+			strcpy(f.vname, "I32");
 			f.type = CONSTANT;
 			f.val = 0;
 			factorpush(f);
@@ -88,9 +95,6 @@ outblock
 var_decl_part
         : /* empty */
         | var_decl_list SEMICOLON
-		{
-			displayGlobalVar();
-		}
         ;
 
 var_decl_list
@@ -126,6 +130,11 @@ proc_decl
 			// printf("[proc_decl]\n");
 			delete();
 			flag = GLOBAL_VAR;
+
+			Factor f;
+			strcpy(f.vname, "VOID");
+			factorpush(f);
+			generateCode(Ret);
 		}
         ;
 
@@ -171,26 +180,50 @@ assignment_statement
 if_statement
         : IF condition
 		{
-			generateCode(BrCond);
+			
+			generateCode(BrCond); // Br1 arg1埋め
+			LLVMcode *tmp = brpop();
+			(tmp->args).brcond.arg2 = cntr; // Br1 arg2即埋め
+			brpush(tmp);
 		}
 		THEN
 		{
-			labelpush(cntr);
-			generateCode(Label);
+			generateCode(Label); // 真ラベル作成
 		}
-		statement else_statement
+		statement
 		{
-			generateCode(Label);
+			generateCode(BrUncond); // Bru2作成
+		} 
+		else_statement
+		{
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = cntr; // Bru2 arg1埋め
+			generateCode(Label); // retラベル作成
 		}
         ;
 
 else_statement
-        : {
-			generateCode(BrCond);
-			generateCode(Label);
+        : ELSE
+		{
+			LLVMcode *tmp1 = brpop();
+			LLVMcode *tmp2 = brpop();
+			brpush(tmp1);
+			(tmp2->args).brcond.arg3 = cntr; // Br1 arg3埋め
+			generateCode(Label); // 偽ラベル作成
 		}
-		ELSE statement
+		statement
+		{
+			generateCode(BrUncond);
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = cntr; // Br3 arg1即埋め
+		}
         | /* empty*/
+		{
+			LLVMcode *tmp1 = brpop();
+			LLVMcode *tmp2 = brpop();
+			brpush(tmp1);
+			(tmp2->args).brcond.arg3 = cntr; // Br1 arg3埋め
+		}
         ;
 
 while_statement
@@ -205,7 +238,6 @@ while_statement
 		condition
 		{
 			generateCode(BrCond); // Br1作成
-			printf("%d\n", codetl->command);
 			LLVMcode *tmp = brpop();
 			(tmp->args).brcond.arg2 = cntr; // Br1 True時即埋め
 			brpush(tmp); // Br1 Fasle時 push
@@ -241,7 +273,13 @@ proc_call_name
         : IDENT
 		{
 			// printf("[proc_call_name %s %d]\n", $1, flag);
-			lookup($1);
+			// lookup($1);
+			Factor fname;
+			fname.type = PROC_NAME;
+			strcpy(fname.vname, $1);
+			fname.val = 0;
+			Factor args[10] = {};
+			generateCall(VOID, fname, args);
 		}
         ;
 
@@ -252,13 +290,29 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN
 		{
-			// printf("[read_statement %s %d]\n", $3, flag);
-			lookup($3);
+			// %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* @x)
+			// lookup($3);
+			Factor fname;
+			fname.type = PROC_NAME;
+			strcpy(fname.vname, "scanf");
+			fname.val = 1;
+			Factor f = generateFactor($3);
+			Factor args[10] = {f};
+			generateCall(I32, fname, args);
 		}
         ;
 
 write_statement
         : WRITE LPAREN expression RPAREN
+		{
+			Factor fname;
+			fname.type = PROC_NAME;
+			strcpy(fname.vname, "printf");
+			fname.val = 1;
+			Factor f = factorpop();
+			Factor args[10] = {f};
+			generateCall(I32, fname, args);
+		}
         ;
 
 null_statement

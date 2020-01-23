@@ -1,9 +1,11 @@
 int x;
+
+void f() {
+   printf("%d", x);
+}
+
 int main()
 {
-   x = 2;
-   x = x / 2;
-   x = x * 2;
-   // x = -(2+3-1);
-   return x;
+   f();
+   return 0;
 }

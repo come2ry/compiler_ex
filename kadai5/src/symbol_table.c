@@ -77,7 +77,10 @@ void insert(char *name, Scope kind)
         stack_tail_ptr = new_rec;
         rec->next = new_rec;
     }
-    addr++; //先頭アドレスをインクリメント
+
+    if (kind != GLOBAL_VAR) {
+        addr++; //先頭アドレスをインクリメント
+    }
 
     printf("insert:\n");
     print_all();

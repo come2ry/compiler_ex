@@ -104,6 +104,29 @@ void generateIcmp(Cmptype type) {
     factorpush( retval );
 }
 
+void generateCall(Type rtype, Factor fname, Factor args[10]) {
+    LLVMcode *tmp;              /* 生成した命令へのポインタ */
+    tmp = (LLVMcode *)malloc(sizeof(LLVMcode)); /*メモリ確保 */
+    tmp->next = NULL;           /* 次の命令へのポインタを初期化 */
+    tmp->command = Call;        /* 命令の種類を加算に設定 */
+    Factor retval;       /* 結果 */
+
+    retval.type = LOCAL_VAR;
+    if (rtype != VOID) {
+        retval.val = cntr++;
+    }
+    (tmp->args).call.rtype = rtype;
+    (tmp->args).call.fname = fname;
+    int i;
+    for (i = 0; i < fname.val; i++) {
+        (tmp->args).call.args[i] = args[i];
+    }
+    (tmp->args).call.retval = retval;
+    insertCode(tmp);
+    if (rtype != VOID && strcmp(fname.vname, "read") != 0 && strcmp(fname.vname, "write") != 0) {
+        factorpush(retval);
+    }
+}
 
 void generateCode(LLVMcommand command) {
     LLVMcode *tmp;             /* 生成した命令へのポインタ */
@@ -140,27 +163,14 @@ void generateCode(LLVMcommand command) {
             break;
         case BrUncond:
             // br label %2
-            // (tmp->args).bruncond.arg1 = (int *)malloc(sizeof(int));
-            // (tmp->args).bruncond.arg1 = &arg1.val;
             insertCode(tmp);
             brpush(tmp);
             break;
         case BrCond:
             // br i1 %4, label %5, label %1
-            // arg3 = factorpop();
-            // arg2 = factorpop();
             arg1 = factorpop();
-
             (tmp->args).brcond.arg1 = arg1;
-            // (tmp->args).brcond.arg2 = (int *)malloc(sizeof(int));
-            // (tmp->args).brcond.arg2 = &arg2.val;
-            // (tmp->args).brcond.arg3 = (int *)malloc(sizeof(int));
-            // (tmp->args).brcond.arg3 = &arg3.val;
             insertCode(tmp);
-
-
-            // brpush(&arg2.val);
-            // brpush(&arg3.val);
             brpush(tmp);
             break;
         case Label:
@@ -236,23 +246,16 @@ void generateCode(LLVMcommand command) {
             }
             factorpush( retval );
             break;
-        // case Icmp:
-        //     // %4 = icmp sgt i32 %3, 0
-        //     arg1 = factorpop();
-        //     arg2 = factorpop();
-        //     retval.type = LOCAL_VAR;
-        //     retval.val = cntr++;
-        //     (tmp->args).icmp.type = type.val;
-        //     (tmp->args).icmp.arg1 = arg1;
-        //     (tmp->args).icmp.arg2 = arg2;
-        //     (tmp->args).icmp.retval = retval;
-        //     insertCode(tmp);
-        //     factorpush( retval );
-        //     break;
         case Ret:
             // ret i32 0
             arg1 = factorpop();
-            (tmp->args).ret.arg1 = arg1;
+            if (strcmp(arg1.vname, "VOID") == 0) {
+                (tmp->args).ret.rtype = VOID;
+            } else {
+                (tmp->args).ret.rtype = I32;
+                (tmp->args).ret.arg1 = arg1;
+            }
+
             insertCode(tmp);
             break;
         default:
@@ -285,6 +288,9 @@ void displayFactor( Factor factor ){
             break;
         case CONSTANT:
             fprintf(fp, "%d", factor.val );
+            break;
+        case PROC_NAME:
+            fprintf(fp, "@%s", factor.vname );
             break;
         default:
             break;
@@ -323,7 +329,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case BrUncond:
             // br label %2
-            fprintf(fp, "  ");
+            fprintf(fp, "  ");            fprintf(fp, "");
             fprintf(fp, "br label %%%d\n", (code->args).label.l );
             break;
         case BrCond:
@@ -393,9 +399,66 @@ void displayLlvmcodes( LLVMcode *code ){
         case Ret:
             // ret i32 0
             fprintf(fp, "  ");
-            fprintf(fp, "ret i32 ");
-            displayFactor( (code->args).ret.arg1 );
+            fprintf(fp, "ret ");
+            switch ((code->args).ret.rtype)
+            {
+            case VOID:
+                fprintf(fp, "void");
+                break;
+            case I32:
+                fprintf(fp, "i32 ");
+                displayFactor( (code->args).ret.arg1 );
+                break;
+            default:
+                break;
+            }
             fprintf(fp, "\n");
+            break;
+        case Call:
+            // call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i64 0, i64 0), i32 %6)
+            fprintf(fp, "  ");
+            switch ((code->args).call.rtype)
+            {
+            case VOID:
+                fprintf(fp, "call void ");
+                break;
+            case I32:
+                displayFactor((code->args).call.retval);
+                fprintf(fp, " = call i32 (i8*, ...) ");
+                break;
+            default:
+                break;
+            }
+
+            displayFactor( (code->args).call.fname );
+            int arity = (code->args).call.fname.val;
+            if (arity > 0) {
+                if (strcmp((code->args).call.fname.vname, "scanf") == 0) {
+                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i64 0, i64 0)");
+                } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
+                    fprintf(fp, "(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i64 0, i64 0)");
+                } else {
+                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i64 0, i64 0)");
+                }
+
+                int i;
+                for (i = 0; i < arity; i++) {
+                    if (strcmp((code->args).call.fname.vname, "scanf") == 0) {
+                        fprintf(fp, ", i32* ");
+                    } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
+                        fprintf(fp, ", i32 ");
+                    } else {
+                        fprintf(fp, ", i32 ");
+                    }
+
+                    displayFactor( (code->args).call.args[i] );
+                    printf("%d",(code->args).call.args[i].type);
+                }
+            } else {
+                fprintf(fp, "(");
+            }
+
+            fprintf(fp, ")\n");
             break;
         default:
             break;
@@ -406,7 +469,9 @@ void displayLlvmcodes( LLVMcode *code ){
 void displayLlvmfundecl( Fundecl *decl ){
     if( decl == NULL )
         return;
-    fprintf(fp, "define i32 @%s() #0 {\n", decl->fname );
+    fprintf(fp, "define ");
+    fprintf(fp, "%s ", (strcmp(decl->fname, "main") == 0) ? "i32": "void");
+    fprintf(fp, "@%s() #0 {\n", decl->fname );
     displayLlvmcodes( decl->codes );
     fprintf(fp, "}\n");
     if( decl->next != NULL ) {
@@ -451,13 +516,14 @@ Factor generateFactor(char *name)
     Factor f;
     f.type = rec->kind;
     strcpy(f.vname, rec->name);
-    f.val = 0;
+    f.val = rec->addr;
     return f;
 }
 
 void displayGlobalVar(){
     struct SymbolTable *rec;
-
+    fprintf(fp, "@.str1 = private unnamed_addr constant [3 x i8] c\"%%d\\00\", align 1\n");
+    fprintf(fp, "@.str2 = private unnamed_addr constant [4 x i8] c\"%%d\\0A\\00\", align 1\n");
     for (rec = stack_head_ptr; rec != NULL; rec = rec->next)
     {
         if (rec->kind != GLOBAL_VAR)
