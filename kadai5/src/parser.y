@@ -299,6 +299,7 @@ for_statement
 			f.val = 1;
 			factorpush(f);
 			generateCode(Add);
+			factorpush(generateFactor($2));
 			generateCode(Store);
 			generateCode(BrUncond);
 			tmp = brpop();
