@@ -25,7 +25,7 @@ define i32 @main() #0 {
 9:
   %10 = load i32, i32* @i, align 4
   %11 = add nsw i32 %10, 1
-  store i32 %2, i32* %11, align 4
+  store i32 %11, i32* @i, align 4
   br label %3
 
 12:

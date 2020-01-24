@@ -391,7 +391,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 480 "parser.y"
+#line 481 "parser.y"
 void yyerror(char *s)
 {
 	fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
@@ -832,6 +832,7 @@ case 47:
 			f.val = 1;
 			factorpush(f);
 			generateCode(Add);
+			factorpush(generateFactor(yystack.l_mark[-10].ident));
 			generateCode(Store);
 			generateCode(BrUncond);
 			tmp = brpop();
@@ -843,7 +844,7 @@ case 47:
 		}
 break;
 case 49:
-#line 319 "parser.y"
+#line 320 "parser.y"
 	{
 			/* printf("[proc_call_name %s %d]\n", $1, flag);*/
 			/* lookup($1);*/
@@ -856,7 +857,7 @@ case 49:
 		}
 break;
 case 51:
-#line 337 "parser.y"
+#line 338 "parser.y"
 	{
 			/* %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @x)*/
 			/* lookup($3);*/
@@ -870,7 +871,7 @@ case 51:
 		}
 break;
 case 52:
-#line 352 "parser.y"
+#line 353 "parser.y"
 	{
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -882,43 +883,43 @@ case 52:
 		}
 break;
 case 54:
-#line 369 "parser.y"
+#line 370 "parser.y"
 	{
 			generateIcmp(EQUAL);
         }
 break;
 case 55:
-#line 373 "parser.y"
+#line 374 "parser.y"
 	{
 			generateIcmp(NE);
 		}
 break;
 case 56:
-#line 377 "parser.y"
+#line 378 "parser.y"
 	{
 			generateIcmp(SLT);
 		}
 break;
 case 57:
-#line 381 "parser.y"
+#line 382 "parser.y"
 	{
 			generateIcmp(SLE);
 		}
 break;
 case 58:
-#line 385 "parser.y"
+#line 386 "parser.y"
 	{
 			generateIcmp(SGT);
 		}
 break;
 case 59:
-#line 389 "parser.y"
+#line 390 "parser.y"
 	{
 			generateIcmp(SGE);
 		}
 break;
 case 62:
-#line 398 "parser.y"
+#line 399 "parser.y"
 	{
 			Factor f;
 			f = factorpop();
@@ -927,35 +928,35 @@ case 62:
 		}
 break;
 case 63:
-#line 405 "parser.y"
+#line 406 "parser.y"
 	{
 			/* printf("[ex PLUS term]\n");*/
 			generateCode(Add);
         }
 break;
 case 64:
-#line 410 "parser.y"
+#line 411 "parser.y"
 	{
 			/* printf("[ex Sub term]\n");*/
 			generateCode(Sub);
         }
 break;
 case 66:
-#line 420 "parser.y"
+#line 421 "parser.y"
 	{
 			/* printf("[term Mult factor]\n");*/
 			generateCode(Mult);
 		}
 break;
 case 67:
-#line 425 "parser.y"
+#line 426 "parser.y"
 	{
 			/* printf("[term Div factor]\n");*/
 			generateCode(Div);
 		}
 break;
 case 69:
-#line 434 "parser.y"
+#line 435 "parser.y"
 	{
 			Factor f;
 			f.type = CONSTANT;
@@ -964,7 +965,7 @@ case 69:
 		}
 break;
 case 71:
-#line 445 "parser.y"
+#line 446 "parser.y"
 	{
 			/* printf("[var_name %s %d]\n", $1, flag);*/
 
@@ -974,7 +975,7 @@ case 71:
 		}
 break;
 case 72:
-#line 461 "parser.y"
+#line 462 "parser.y"
 	{
 			/* printf("[id_list]\n");*/
 			insert(yystack.l_mark[0].ident, flag);
@@ -984,7 +985,7 @@ case 72:
 		}
 break;
 case 73:
-#line 469 "parser.y"
+#line 470 "parser.y"
 	{
 			/* printf("[id_list]\n");*/
 			insert(yystack.l_mark[0].ident, flag);
@@ -993,7 +994,7 @@ case 73:
 			}
 		}
 break;
-#line 996 "y.tab.c"
+#line 997 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
