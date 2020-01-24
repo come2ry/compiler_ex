@@ -6,6 +6,5 @@ int main(int argc, char const *argv[])
     for (i = 1; i <= n; i  = i + 1) {
         x = i;
     }
-    printf("%d\n", x);
     return 0;
 }
