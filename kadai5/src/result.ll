@@ -15,7 +15,7 @@ define i32 @main() #0 {
   %4 = load i32, i32* @i, align 4
   %5 = load i32, i32* @n, align 4
   %6 = icmp sle i32 %4, %5
-  br i1 %6, label %7, label %10
+  br i1 %6, label %7, label %12
 
 7:
   %8 = load i32, i32* @i, align 4
@@ -23,9 +23,12 @@ define i32 @main() #0 {
   br label %9
 
 9:
+  %10 = load i32, i32* @i, align 4
+  %11 = add nsw i32 %10, 1
+  store i32 %2, i32* %11, align 4
   br label %3
 
-10:
+12:
   ret i32 0
 }
 declare dso_local i32 @scanf(i8*, ...)

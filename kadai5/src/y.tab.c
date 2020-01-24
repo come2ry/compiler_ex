@@ -391,7 +391,7 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 466 "parser.y"
+#line 480 "parser.y"
 void yyerror(char *s)
 {
 	fprintf(stderr, "%s in line %d: token '%s'\n", s, yylineno, yytext);
@@ -785,19 +785,19 @@ case 43:
 #line 261 "parser.y"
 	{
 			/* あとでIDENTを使いたいのでassignment_stateは使わない*/
-			Factor f = generateFactor(yystack.l_mark[-2].ident);
-			factorpush(f);
+			factorpush(generateFactor(yystack.l_mark[-2].ident));
 			generateCode(Store);
 			generateCode(BrUncond); /* forを開始するBru1*/
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = cntr; /* Bru1 arg1即埋め*/
 			labelpush(cntr); /* 戻り用ラベルpush*/
 			generateCode(Label); /* 真ラベル作成*/
 		}
 break;
 case 44:
-#line 271 "parser.y"
+#line 272 "parser.y"
 	{
-			Factor f = generateFactor(yystack.l_mark[-4].ident);
-			factorpush(f);
+			factorpush(generateFactor(yystack.l_mark[-4].ident));
 			generateCode(Load);
 		}
 break;
@@ -822,14 +822,28 @@ case 47:
 	{
 			generateCode(BrUncond);
 			LLVMcode *tmp = brpop();
-			(tmp->args).bruncond.arg1 = labelpop(); /* Bru3 arg1埋め 戻る*/
+			(tmp->args).bruncond.arg1 = cntr; /* Bru3 arg1即埋め 次へ*/
+
+			generateCode(Label); /* i++ラベル作成*/
+			factorpush(generateFactor(yystack.l_mark[-10].ident));
+			generateCode(Load);
+			Factor f;
+			f.type = CONSTANT;
+			f.val = 1;
+			factorpush(f);
+			generateCode(Add);
+			generateCode(Store);
+			generateCode(BrUncond);
+			tmp = brpop();
+			(tmp->args).bruncond.arg1 = labelpop(); /* Bru4 arg1埋め 戻る*/
+
 			tmp = brpop();
 			(tmp->args).brcond.arg3 = cntr; /* Bru1 False埋め*/
 			generateCode(Label); /* for外ラベル作成*/
 		}
 break;
 case 49:
-#line 305 "parser.y"
+#line 319 "parser.y"
 	{
 			/* printf("[proc_call_name %s %d]\n", $1, flag);*/
 			/* lookup($1);*/
@@ -842,9 +856,9 @@ case 49:
 		}
 break;
 case 51:
-#line 323 "parser.y"
+#line 337 "parser.y"
 	{
-			/* %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* @x)*/
+			/* %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @x)*/
 			/* lookup($3);*/
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -856,7 +870,7 @@ case 51:
 		}
 break;
 case 52:
-#line 338 "parser.y"
+#line 352 "parser.y"
 	{
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -868,43 +882,43 @@ case 52:
 		}
 break;
 case 54:
-#line 355 "parser.y"
+#line 369 "parser.y"
 	{
 			generateIcmp(EQUAL);
         }
 break;
 case 55:
-#line 359 "parser.y"
+#line 373 "parser.y"
 	{
 			generateIcmp(NE);
 		}
 break;
 case 56:
-#line 363 "parser.y"
+#line 377 "parser.y"
 	{
 			generateIcmp(SLT);
 		}
 break;
 case 57:
-#line 367 "parser.y"
+#line 381 "parser.y"
 	{
 			generateIcmp(SLE);
 		}
 break;
 case 58:
-#line 371 "parser.y"
+#line 385 "parser.y"
 	{
 			generateIcmp(SGT);
 		}
 break;
 case 59:
-#line 375 "parser.y"
+#line 389 "parser.y"
 	{
 			generateIcmp(SGE);
 		}
 break;
 case 62:
-#line 384 "parser.y"
+#line 398 "parser.y"
 	{
 			Factor f;
 			f = factorpop();
@@ -913,35 +927,35 @@ case 62:
 		}
 break;
 case 63:
-#line 391 "parser.y"
+#line 405 "parser.y"
 	{
 			/* printf("[ex PLUS term]\n");*/
 			generateCode(Add);
         }
 break;
 case 64:
-#line 396 "parser.y"
+#line 410 "parser.y"
 	{
 			/* printf("[ex Sub term]\n");*/
 			generateCode(Sub);
         }
 break;
 case 66:
-#line 406 "parser.y"
+#line 420 "parser.y"
 	{
 			/* printf("[term Mult factor]\n");*/
 			generateCode(Mult);
 		}
 break;
 case 67:
-#line 411 "parser.y"
+#line 425 "parser.y"
 	{
 			/* printf("[term Div factor]\n");*/
 			generateCode(Div);
 		}
 break;
 case 69:
-#line 420 "parser.y"
+#line 434 "parser.y"
 	{
 			Factor f;
 			f.type = CONSTANT;
@@ -950,7 +964,7 @@ case 69:
 		}
 break;
 case 71:
-#line 431 "parser.y"
+#line 445 "parser.y"
 	{
 			/* printf("[var_name %s %d]\n", $1, flag);*/
 
@@ -960,7 +974,7 @@ case 71:
 		}
 break;
 case 72:
-#line 447 "parser.y"
+#line 461 "parser.y"
 	{
 			/* printf("[id_list]\n");*/
 			insert(yystack.l_mark[0].ident, flag);
@@ -970,7 +984,7 @@ case 72:
 		}
 break;
 case 73:
-#line 455 "parser.y"
+#line 469 "parser.y"
 	{
 			/* printf("[id_list]\n");*/
 			insert(yystack.l_mark[0].ident, flag);
@@ -979,7 +993,7 @@ case 73:
 			}
 		}
 break;
-#line 982 "y.tab.c"
+#line 996 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;
