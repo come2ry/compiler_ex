@@ -264,6 +264,8 @@ for_statement
 			factorpush(f);
 			generateCode(Store);
 			generateCode(BrUncond); // forを開始するBru1
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = cntr; // Bru1 arg1即埋め
 			labelpush(cntr); // 戻り用ラベルpush
 			generateCode(Label); // 真ラベル作成
 		}
@@ -289,7 +291,14 @@ for_statement
 		{
 			generateCode(BrUncond);
 			LLVMcode *tmp = brpop();
-			(tmp->args).bruncond.arg1 = labelpop(); // Bru3 arg1埋め 戻る
+			(tmp->args).bruncond.arg1 = cntr; // Bru3 arg1即埋め 次へ
+
+			generateCode(Label);
+			// generateCode("i++");
+			generateCode(BrUncond);
+			tmp = brpop();
+			(tmp->args).bruncond.arg1 = labelpop(); // Bru4 arg1埋め 戻る
+
 			tmp = brpop();
 			(tmp->args).brcond.arg3 = cntr; // Bru1 False埋め
 			generateCode(Label); // for外ラベル作成
