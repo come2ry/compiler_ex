@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "code_generator.h": "c",
-        "stdio.h": "c",
-        "stdlib.h": "c",
-        "symbol_table.h": "c",
-        "data.h": "c"
-    }
-}

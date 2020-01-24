@@ -25,8 +25,7 @@ typedef enum
     Mult,     /* mult   */
     Div,      /* div    */
     Icmp,     /* icmp   */
-    Ret,       /* ret    */
-    Call
+    Ret       /* ret    */
 } LLVMcommand;
 
 /* 比較演算子の種類 */
@@ -39,15 +38,6 @@ typedef enum
     SLT,   /* slt （<，符号付き） */
     SLE    /* sle （<=，符号付き）*/
 } Cmptype;
-
-/* 型の種類 */
-typedef enum
-{
-    I8,
-    I16,
-    I32,
-    VOID
-} Type;
 
 typedef struct llvmcode
 {
@@ -119,16 +109,8 @@ typedef struct llvmcode
         } icmp;
         struct
         { /* ret    */
-            Type rtype;
             Factor arg1;
         } ret;
-        struct
-        { /* call */
-            Type rtype;
-            Factor fname;
-            Factor args[10];
-            Factor retval;
-        } call;
     } args;
     /* 次の命令へのポインタ */
     struct llvmcode *next;
@@ -153,40 +135,10 @@ typedef struct fundecl
     struct fundecl *next; /* 次の関数定義へのポインタ      */
 } Fundecl;
 
-extern LLVMcode *codehd; /* 命令列の先頭のアドレスを保持するポインタ */
-extern LLVMcode *codetl; /* 命令列の末尾のアドレスを保持するポインタ */
-
-/* 関数定義の線形リストの先頭の要素のアドレスを保持するポインタ */
-extern Fundecl *declhd;
-/* 関数定義の線形リストの末尾の要素のアドレスを保持するポインタ */
-extern Fundecl *decltl;
-
-typedef struct
-{
-    int element[100];
-    unsigned int top;
-} Labelstack;
-
-typedef struct
-{
-    LLVMcode *element[100];
-    unsigned int top;
-} BrAddstack;
-
-BrAddstack brstack;
-Labelstack lstack;
-
 void init_fstack();
 Factor factorpop();
 void factorpush(Factor x);
-LLVMcode *brpop();
-void brpush(LLVMcode *x);
-int labelpop();
-void labelpush(int x);
-// void backpatch();
 void generateCode(LLVMcommand command);
-void generateIcmp(Cmptype type);
-void generateCall(Type rtype, Factor fname, Factor args[10]);
 void displayFactor(Factor factor);
 void displayLlvmcodes(LLVMcode *code);
 void displayLlvmfundecl(Fundecl *decl);
@@ -194,6 +146,5 @@ void insertDecl(char *fname, unsigned arity, Factor *args);
 Factor generateFactor(char *name);
 void displayGlobalVar();
 void insertCode(LLVMcode *tmp);
-// void displayfstack();
 
 #endif

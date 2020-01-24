@@ -1,11 +1,13 @@
 #include <stdio.h>
 int n, sum;
-void sum_add(n){
+void result(n){
     sum += n;
+    return 0;
 }
 
 void result(){
     printf("%d",sum);
+    return 0;
 }
 
 int main(){
@@ -13,7 +15,7 @@ int main(){
     sum = 0;
     while ( n > 0)
     {
-        sum_add(n);
+        result(n);
         n --;
     }
     result();

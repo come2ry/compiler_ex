@@ -1,51 +1,57 @@
-; ModuleID = 'pl2a.c'
-source_filename = "pl2a.c"
+; ModuleID = 'pl2c.c'
+source_filename = "pl2c.c"
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.14.0"
 
+@sum = common global i32 0, align 4
 @.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @n = common global i32 0, align 4
-@.str.1 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone ssp uwtable
-define i32 @fact(i32) #0 {
+define void @sum_add(i32) #0 {
   %2 = alloca i32, align 4
-  %3 = alloca i32, align 4
-  store i32 %0, i32* %3, align 4
-  %4 = load i32, i32* %3, align 4
-  %5 = icmp sle i32 %4, 0
-  br i1 %5, label %6, label %7
-
-; <label>:6:                                      ; preds = %1
-  store i32 1, i32* %2, align 4
-  br label %13
-
-; <label>:7:                                      ; preds = %1
-  %8 = load i32, i32* %3, align 4
-  %9 = sub nsw i32 %8, 1
-  %10 = call i32 @fact(i32 %9)
-  %11 = load i32, i32* %3, align 4
-  %12 = mul nsw i32 %10, %11
-  store i32 %12, i32* %2, align 4
-  br label %13
-
-; <label>:13:                                     ; preds = %7, %6
-  %14 = load i32, i32* %2, align 4
-  ret i32 %14
+  store i32 %0, i32* %2, align 4
+  %3 = load i32, i32* %2, align 4
+  %4 = load i32, i32* @sum, align 4
+  %5 = add nsw i32 %4, %3
+  store i32 %5, i32* @sum, align 4
+  ret void
 }
+
+; Function Attrs: noinline nounwind optnone ssp uwtable
+define void @result() #0 {
+  %1 = load i32, i32* @sum, align 4
+  %2 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32 %1)
+  ret void
+}
+
+declare i32 @printf(i8*, ...) #1
 
 ; Function Attrs: noinline nounwind optnone ssp uwtable
 define i32 @main() #0 {
-  %1 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @n)
-  %2 = load i32, i32* @n, align 4
-  %3 = call i32 @fact(i32 %2)
-  %4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str.1, i32 0, i32 0), i32 %3)
+  %1 = alloca i32, align 4
+  store i32 0, i32* %1, align 4
+  store i32 10, i32* @n, align 4
+  store i32 0, i32* @sum, align 4
+  br label %2
+
+; <label>:2:                                      ; preds = %5, %0
+  %3 = load i32, i32* @n, align 4
+  %4 = icmp sgt i32 %3, 0
+  br i1 %4, label %5, label %9
+
+; <label>:5:                                      ; preds = %2
+  %6 = load i32, i32* @n, align 4
+  call void @sum_add(i32 %6)
+  %7 = load i32, i32* @n, align 4
+  %8 = add nsw i32 %7, -1
+  store i32 %8, i32* @n, align 4
+  br label %2
+
+; <label>:9:                                      ; preds = %2
+  call void @result()
   ret i32 0
 }
-
-declare i32 @scanf(i8*, ...) #1
-
-declare i32 @printf(i8*, ...) #1
 
 attributes #0 = { noinline nounwind optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }

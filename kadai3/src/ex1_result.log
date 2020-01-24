@@ -1,0 +1,60 @@
+insert:
+    x 0 GLOBAL
+
+↓
+↓
+
+insert:
+    x 0 GLOBAL
+    y 1 GLOBAL
+
+↓
+↓
+
+insert:
+    x 0 GLOBAL
+    y 1 GLOBAL
+    z 2 GLOBAL
+
+↓
+↓
+
+[assignment_statement x 1]
+lookup:
+    x 0 GLOBAL
+
+↓
+↓
+
+[assignment_statement y 1]
+lookup:
+    y 1 GLOBAL
+
+↓
+↓
+
+[assignment_statement z 1]
+lookup:
+    z 2 GLOBAL
+
+↓
+↓
+
+[var_name x 1]
+lookup:
+    x 0 GLOBAL
+
+↓
+↓
+
+[var_name y 1]
+lookup:
+    y 1 GLOBAL
+
+↓
+↓
+
+[program end.]
+    x 0 GLOBAL
+    y 1 GLOBAL
+    z 2 GLOBAL
