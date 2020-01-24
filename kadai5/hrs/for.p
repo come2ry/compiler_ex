@@ -6,5 +6,5 @@ begin
 	begin
 		x := i;
 	end
-	write(x);
+	write(x)
 end.
