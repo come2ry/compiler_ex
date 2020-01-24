@@ -9,35 +9,31 @@ target triple = "x86_64-apple-macosx10.14.0"
 @x = common global i32 0, align 4
 
 ; Function Attrs: noinline nounwind optnone ssp uwtable
-define i32 @main(i32, i8**) #0 {
-  %3 = alloca i32, align 4
-  %4 = alloca i32, align 4
-  %5 = alloca i8**, align 8
-  store i32 0, i32* %3, align 4
-  store i32 %0, i32* %4, align 4
-  store i8** %1, i8*** %5, align 8
-  %6 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @n)
+define i32 @main() #0 {
+  %1 = alloca i32, align 4
+  store i32 0, i32* %1, align 4
+  %2 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @n)
   store i32 1, i32* @i, align 4
-  br label %7
+  br label %3
 
-; <label>:7:                                      ; preds = %13, %2
+; <label>:3:                                      ; preds = %9, %0
+  %4 = load i32, i32* @i, align 4
+  %5 = load i32, i32* @n, align 4
+  %6 = icmp sle i32 %4, %5
+  br i1 %6, label %7, label %12
+
+; <label>:7:                                      ; preds = %3
   %8 = load i32, i32* @i, align 4
-  %9 = load i32, i32* @n, align 4
-  %10 = icmp sle i32 %8, %9
-  br i1 %10, label %11, label %16
+  store i32 %8, i32* @x, align 4
+  br label %9
 
-; <label>:11:                                     ; preds = %7
-  %12 = load i32, i32* @i, align 4
-  store i32 %12, i32* @x, align 4
-  br label %13
+; <label>:9:                                      ; preds = %7
+  %10 = load i32, i32* @i, align 4
+  %11 = add nsw i32 %10, 1
+  store i32 %11, i32* @i, align 4
+  br label %3
 
-; <label>:13:                                     ; preds = %11
-  %14 = load i32, i32* @i, align 4
-  %15 = add nsw i32 %14, 1
-  store i32 %15, i32* @i, align 4
-  br label %7
-
-; <label>:16:                                     ; preds = %7
+; <label>:12:                                     ; preds = %3
   ret i32 0
 }
 

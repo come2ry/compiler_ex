@@ -257,9 +257,9 @@ while_statement
 
 
 for_statement
-		// あとでIDENTを使いたいのでassignment_stateは使わない
         : FOR IDENT ASSIGN expression
 		{
+			// あとでIDENTを使いたいのでassignment_stateは使わない
 			Factor f = generateFactor($2);
 			factorpush(f);
 			generateCode(Store);
