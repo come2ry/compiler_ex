@@ -292,7 +292,7 @@ for_statement
 			(tmp->args).bruncond.arg1 = labelpop(); // Bru3 arg1埋め 戻る
 			tmp = brpop();
 			(tmp->args).brcond.arg3 = cntr; // Bru1 False埋め
-			generateCall(Label); // for外ラベル作成
+			generateCode(Label); // for外ラベル作成
 		}
         ;
 
