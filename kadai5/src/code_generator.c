@@ -434,11 +434,11 @@ void displayLlvmcodes( LLVMcode *code ){
             int arity = (code->args).call.fname.val;
             if (arity > 0) {
                 if (strcmp((code->args).call.fname.vname, "scanf") == 0) {
-                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i64 0, i64 0)");
+                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0)");
                 } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
-                    fprintf(fp, "(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i64 0, i64 0)");
+                    fprintf(fp, "(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i32 0, i32 0)");
                 } else {
-                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i64 0, i64 0)");
+                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0)");
                 }
 
                 int i;

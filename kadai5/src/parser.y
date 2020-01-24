@@ -60,12 +60,12 @@ program
 			print_all();
 			displayLlvmfundecl(declhd);
 			fprintf(fp, "declare dso_local i32 @scanf(i8*, ...)\n");
-    		fprintf(fp, "declare dso_local i32 @printf(i8*, ...)\n");
+			fprintf(fp, "declare dso_local i32 @printf(i8*, ...)\n");
 		}
         ;
 
 outblock
-        : var_decl_part 
+        : var_decl_part
 		{
 			displayGlobalVar();
 		}
@@ -170,8 +170,6 @@ statement
 assignment_statement
         : IDENT ASSIGN expression
 		{
-			// printf("[assignment_statement %s %d]\n", $1, flag);
-
 			factorpush(generateFactor($1));
 			generateCode(Store);
 		}
@@ -180,7 +178,7 @@ assignment_statement
 if_statement
         : IF condition
 		{
-			
+
 			generateCode(BrCond); // Br1 arg1埋め
 			LLVMcode *tmp = brpop();
 			(tmp->args).brcond.arg2 = cntr; // Br1 arg2即埋め
@@ -193,7 +191,7 @@ if_statement
 		statement
 		{
 			generateCode(BrUncond); // Bru2作成
-		} 
+		}
 		else_statement
 		{
 			LLVMcode *tmp = brpop();
@@ -227,7 +225,7 @@ else_statement
         ;
 
 while_statement
-        : WHILE 
+        : WHILE
 		{
 			generateCode(BrUncond); // Bru0作成
 			LLVMcode *tmp = brpop();
@@ -257,12 +255,45 @@ while_statement
 		}
         ;
 
+
 for_statement
-        : FOR IDENT
+		// あとでIDENTを使いたいのでassignment_stateは使わない
+        : FOR IDENT ASSIGN expression
 		{
-			// printf("[for_statement %s %d]\n", $2, flag);
-			lookup($2);
-		} ASSIGN expression TO expression DO statement
+			Factor f = generateFactor($2);
+			factorpush(f);
+			generateCode(Store);
+			generateCode(BrUncond); // forを開始するBru1
+			labelpush(cntr); // 戻り用ラベルpush
+			generateCode(Label); // 真ラベル作成
+		}
+		TO
+		{
+			Factor f = generateFactor($2);
+			factorpush(f);
+			generateCode(Load);
+		}
+		expression
+		{
+			generateIcmp(SLE);
+			generateCode(BrCond); // Br2作成
+			LLVMcode *tmp = brpop();
+			(tmp->args).brcond.arg2 = cntr; // Br2 True時即埋め
+			brpush(tmp); // Br2 Fasle時 push
+		}
+		DO
+		{
+			generateCode(Label);
+		}
+		statement
+		{
+			generateCode(BrUncond);
+			LLVMcode *tmp = brpop();
+			(tmp->args).bruncond.arg1 = labelpop(); // Bru3 arg1埋め 戻る
+			tmp = brpop();
+			(tmp->args).brcond.arg3 = cntr; // Bru1 False埋め
+			generateCall(Label); // for外ラベル作成
+		}
         ;
 
 proc_call_statement
