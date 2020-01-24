@@ -7,22 +7,25 @@
 define i32 @main() #0 {
   %1 = alloca i32, align 4
   store i32 0, i32* %1, align 4
-  %2 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i64 0, i64 0), i32* @n)
+  %2 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0), i32* @n)
   store i32 1, i32* @i, align 4
-  br label %0
+  br label %3
 
 3:
   %4 = load i32, i32* @i, align 4
   %5 = load i32, i32* @n, align 4
   %6 = icmp sle i32 %4, %5
-  br i1 %6, label %7, label %9
+  br i1 %6, label %7, label %10
 
 7:
   %8 = load i32, i32* @i, align 4
   store i32 %8, i32* @x, align 4
-  br label %3
+  br label %9
 
 9:
+  br label %3
+
+10:
   ret i32 0
 }
 declare dso_local i32 @scanf(i8*, ...)

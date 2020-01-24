@@ -415,7 +415,7 @@ void displayLlvmcodes( LLVMcode *code ){
             fprintf(fp, "\n");
             break;
         case Call:
-            // call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i64 0, i64 0), i32 %6)
+            // call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.1, i32 0, i32 0), i32 %6)
             fprintf(fp, "  ");
             switch ((code->args).call.rtype)
             {

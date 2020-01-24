@@ -260,8 +260,7 @@ for_statement
         : FOR IDENT ASSIGN expression
 		{
 			// あとでIDENTを使いたいのでassignment_stateは使わない
-			Factor f = generateFactor($2);
-			factorpush(f);
+			factorpush(generateFactor($2));
 			generateCode(Store);
 			generateCode(BrUncond); // forを開始するBru1
 			LLVMcode *tmp = brpop();
@@ -271,8 +270,7 @@ for_statement
 		}
 		TO
 		{
-			Factor f = generateFactor($2);
-			factorpush(f);
+			factorpush(generateFactor($2));
 			generateCode(Load);
 		}
 		expression
@@ -293,8 +291,15 @@ for_statement
 			LLVMcode *tmp = brpop();
 			(tmp->args).bruncond.arg1 = cntr; // Bru3 arg1即埋め 次へ
 
-			generateCode(Label);
-			// generateCode("i++");
+			generateCode(Label); // i++ラベル作成
+			factorpush(generateFactor($2));
+			generateCode(Load);
+			Factor f;
+			f.type = CONSTANT;
+			f.val = 1;
+			factorpush(f);
+			generateCode(Add);
+			generateCode(Store);
 			generateCode(BrUncond);
 			tmp = brpop();
 			(tmp->args).bruncond.arg1 = labelpop(); // Bru4 arg1埋め 戻る
@@ -330,7 +335,7 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN
 		{
-			// %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* @x)
+			// %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @x)
 			// lookup($3);
 			Factor fname;
 			fname.type = PROC_NAME;
