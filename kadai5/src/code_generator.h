@@ -183,7 +183,6 @@ LLVMcode *brpop();
 void brpush(LLVMcode *x);
 int labelpop();
 void labelpush(int x);
-// void backpatch();
 void generateCode(LLVMcommand command);
 void generateIcmp(Cmptype type);
 void generateCall(Type rtype, Factor fname, Factor args[10]);
