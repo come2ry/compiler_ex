@@ -71,7 +71,6 @@ outblock
 		}
 		subprog_decl_part
         {
-			// printf("[outblock]\n");
 			insertDecl("main", 0, NULL);
 			init_fstack();
 			Factor f;
@@ -127,7 +126,6 @@ proc_decl
 		}
 		inblock
 		{
-			// printf("[proc_decl]\n");
 			delete();
 			flag = GLOBAL_VAR;
 
@@ -318,8 +316,6 @@ proc_call_statement
 proc_call_name
         : IDENT
 		{
-			// printf("[proc_call_name %s %d]\n", $1, flag);
-			// lookup($1);
 			Factor fname;
 			fname.type = PROC_NAME;
 			strcpy(fname.vname, $1);
@@ -336,8 +332,6 @@ block_statement
 read_statement
         : READ LPAREN IDENT RPAREN
 		{
-			// %2 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i32 0, i32 0), i32* @x)
-			// lookup($3);
 			Factor fname;
 			fname.type = PROC_NAME;
 			strcpy(fname.vname, "scanf");
@@ -404,12 +398,10 @@ expression
 		}
         | expression PLUS term
         {
-			// printf("[ex PLUS term]\n");
 			generateCode(Add);
         }
         | expression MINUS term
         {
-			// printf("[ex Sub term]\n");
 			generateCode(Sub);
         }
         ;
@@ -419,12 +411,10 @@ term
         : factor
         | term MULT factor
 		{
-			// printf("[term Mult factor]\n");
 			generateCode(Mult);
 		}
         | term DIV factor
 		{
-			// printf("[term Div factor]\n");
 			generateCode(Div);
 		}
         ;
@@ -444,8 +434,6 @@ factor
 var_name
         : IDENT
 		{
-			// printf("[var_name %s %d]\n", $1, flag);
-
 			Factor f = generateFactor($1);
 			factorpush(f);
 			generateCode(Load);
@@ -460,7 +448,6 @@ var_name
 id_list
         : IDENT
 		{
-			// printf("[id_list]\n");
 			insert($1, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);
@@ -468,7 +455,6 @@ id_list
 		}
         | id_list COMMA IDENT
 		{
-			// printf("[id_list]\n");
 			insert($3, flag);
 			if (flag == LOCAL_VAR) {
 				generateCode(Alloca);

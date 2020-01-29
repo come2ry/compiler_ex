@@ -329,7 +329,7 @@ void displayLlvmcodes( LLVMcode *code ){
             break;
         case BrUncond:
             // br label %2
-            fprintf(fp, "  ");            fprintf(fp, "");
+            fprintf(fp, "  ");
             fprintf(fp, "br label %%%d\n", (code->args).label.l );
             break;
         case BrCond:
