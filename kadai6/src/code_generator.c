@@ -123,7 +123,7 @@ void generateCall(Type rtype, Factor fname, Factor args[10]) {
     }
     (tmp->args).call.retval = retval;
     insertCode(tmp);
-    if (rtype != VOID && strcmp(fname.vname, "read") != 0 && strcmp(fname.vname, "write") != 0) {
+    if (rtype != VOID && strcmp(fname.vname, "scanf") != 0 && strcmp(fname.vname, "printf") != 0) {
         factorpush(retval);
     }
 }
@@ -537,9 +537,11 @@ Factor *getArgs() {
     Factor args[10] = {};
     printf("getArg\n");
 
+    int arity = 0;
     while (fstack.top != 0) {
         Factor f = factorpop();
-        args[fstack.top] = f;
+        args[fstack.top-1] = f;
+        arity++;
 
         switch( f.type ){
             case GLOBAL_VAR:
@@ -558,6 +560,8 @@ Factor *getArgs() {
                 break;
         }
     }
+    printf("arity: %d\n", arity);
     printf("\n----------------\n");
+
     return &args;
 }
