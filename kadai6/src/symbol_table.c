@@ -51,17 +51,20 @@ void print_all()
     }
 }
 
-void insert(char *name, Scope kind)
+void insert(char *name, Scope kind, int cntr)
 {
     struct SymbolTable *new_rec, *rec;
-    static unsigned int addr = 0;
+    // static unsigned int addr = 0;
 
     new_rec = (struct SymbolTable *)malloc(sizeof(struct SymbolTable *));
     new_rec->name = (char *)malloc(strlen(name));
 
     new_rec->next = NULL;
     strcpy((new_rec->name), name);
-    new_rec->addr = addr;
+    if (kind == LOCAL_VAR) {
+        new_rec->addr = cntr; //先頭アドレスをインクリメント
+    }
+    
     new_rec->kind = kind;
 
     if (stack_head_ptr == NULL)
@@ -78,9 +81,6 @@ void insert(char *name, Scope kind)
         rec->next = new_rec;
     }
 
-    if (kind != GLOBAL_VAR) {
-        addr++; //先頭アドレスをインクリメント
-    }
 
     printf("insert:\n");
     print_all();

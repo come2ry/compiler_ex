@@ -438,8 +438,6 @@ void displayLlvmcodes( LLVMcode *code ){
                     fprintf(fp, "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0), ");
                 } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
                     fprintf(fp, "i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i32 0, i32 0), ");
-                } else {
-                    fprintf(fp, "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0), ");
                 }
 
                 int i;
@@ -451,7 +449,7 @@ void displayLlvmcodes( LLVMcode *code ){
                     } else {
                         fprintf(fp, "i32 ");
                     }
-
+                    
                     displayFactor( (code->args).call.args[i] );
                     if (i != arity-1) {
                         fprintf(fp, ", ");
@@ -474,7 +472,17 @@ void displayLlvmfundecl( Fundecl *decl ){
         return;
     fprintf(fp, "define ");
     fprintf(fp, "%s ", (strcmp(decl->fname, "main") == 0) ? "i32": "void");
-    fprintf(fp, "@%s() #0 {\n", decl->fname );
+    fprintf(fp, "@%s(", decl->fname );
+    int i;
+    for (i = 0; i < decl->arity; i++) {
+        // fprintf(fp, (decl->args)[i].type);
+        fprintf(fp, "i32");
+        if (i != decl->arity - 1) {
+            fprintf(fp, ", ");
+        }
+    }
+    fprintf(fp, ") #0 {\n");
+
     displayLlvmcodes( decl->codes );
     fprintf(fp, "}\n");
     if( decl->next != NULL ) {
@@ -493,16 +501,18 @@ void insertDecl(char *fname, unsigned arity, Factor *args)
     decl_ptr->arity = arity;
     decl_ptr->codes = codehd = codetl = NULL;
     decl_ptr->next = NULL;
+    int i;
+    for (i = 0; i < arity; i++) {
+        (decl_ptr->args)[i] = args[i];
+    }
 
-    if (declhd == NULL)
-    {
+    if (declhd == NULL) {
         declhd = decltl = decl_ptr;
     } else {
         decltl->next = decl_ptr;
         decltl = decl_ptr;
     }
 
-    cntr = 1; // %1
     return;
 }
 
@@ -537,35 +547,49 @@ void displayGlobalVar(){
     fprintf(fp, "\n");
 }
 
-Factor *getArgs() {
-    Factor args[10] = {};
-    printf("getArg\n");
+// Factor *getArgs(int arity) {
+//     Factor args[10] = {};
+//     printf("getArg\n");
 
-    int arity = 0;
-    while (fstack.top != 0) {
-        Factor f = factorpop();
-        args[fstack.top] = f;
-        arity++;
+//     int n = 0;
+//     while (n != 0) {
+//         Factor f = factorpop();
+//         args[n--] = f;
 
-        switch( f.type ){
-            case GLOBAL_VAR:
-                printf("@%s", f.vname );
-                break;
-            case LOCAL_VAR:
-                printf("%%%d", f.val );
-                break;
-            case CONSTANT:
-                printf("%d", f.val );
-                break;
-            case PROC_NAME:
-                printf("@%s", f.vname );
-                break;
-            default:
-                break;
-        }
+//         switch( f.type ){
+//             case GLOBAL_VAR:
+//                 printf("@%s", f.vname );
+//                 break;
+//             case LOCAL_VAR:
+//                 printf("%%%d", f.val );
+//                 break;
+//             case CONSTANT:
+//                 printf("%d", f.val );
+//                 break;
+//             case PROC_NAME:
+//                 printf("@%s", f.vname );
+//                 break;
+//             default:
+//                 break;
+//         }
+//     }
+//     printf("\narity: %d\n", arity);
+//     printf("----------------\n");
+
+//     return &args;
+// }
+
+
+void reversefstack() {
+    int l = fstack.top;
+    Factor f[l+1];
+    int i = 0;
+    while (fstack.top > 0) {
+        f[i++] = factorpop();
     }
-    printf("\narity: %d\n", arity);
-    printf("----------------\n");
 
-    return &args;
+    for (i = 0; i < l; i++) {
+        factorpush(f[i]);
+    }
+
 }

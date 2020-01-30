@@ -21,5 +21,5 @@ void print_rec(struct SymbolTable *rec);
 void print_all();
 struct SymbolTable *lookup(char *name);
 void delete();
-void insert(char *name, Scope kind);
+void insert(char *name, Scope kind, int cntr);
 #endif

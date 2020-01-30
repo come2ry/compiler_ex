@@ -19,6 +19,8 @@ Scope flag = GLOBAL_VAR;
 char *fname = "result.ll";
 FILE *fp;
 int arity = 0;
+int is_args = 0;
+Factor args[10] = {};
 
 %}
 
@@ -41,6 +43,7 @@ int arity = 0;
 %token PERIOD ASSIGN
 %token <num> NUMBER                    // ← yylval の型を指定
 %token <ident> IDENT                   // ← yylval の型を指定
+%type <ident> proc_name
 
 %%
 
@@ -72,7 +75,9 @@ outblock
 		}
 		subprog_decl_part
         {
+			cntr = 0;
 			insertDecl("main", 0, NULL);
+			cntr++; // 返り値用
 			init_fstack();
 			Factor f;
 			f.type = CONSTANT;
@@ -123,7 +128,11 @@ subprog_decl
 proc_decl
         : PROCEDURE proc_name SEMICOLON
 		{
+			cntr = 0;
 			flag = LOCAL_VAR;
+			insert($2, PROC_NAME, cntr);
+			insertDecl($2, 0, NULL);
+			cntr++; // 返り値用
 		}
 		inblock
 		{
@@ -135,15 +144,45 @@ proc_decl
 			factorpush(f);
 			generateCode(Ret);
 		}
-		| PROCEDURE proc_name LPAREN id_list RPAREN SEMICOLON inblock
+		| PROCEDURE proc_name LPAREN
+		{
+			is_args = 1;
+			cntr = 0;
+			flag = LOCAL_VAR;
+		}
+		id_list RPAREN
+		{
+			is_args = 0;
+		}
+		SEMICOLON 
+		{
+			insert($2, PROC_NAME, cntr);
+			insertDecl($2, arity, args);
+			cntr++; // 返り値用
+			int i;
+
+			reversefstack();
+			for (i = 0; i < arity; i++) {
+				insert(args[i].vname, LOCAL_VAR, cntr);
+				generateCode(Alloca);
+				generateCode(Store);
+			}
+			arity = 0;
+		}
+		inblock
+		{
+			delete();
+			flag = GLOBAL_VAR;
+
+			Factor f;
+			strcpy(f.vname, "VOID");
+			factorpush(f);
+			generateCode(Ret);
+		}
         ;
 
 proc_name
         : IDENT
-		{
-			insert($1, PROC_NAME);
-			insertDecl($1, 0, NULL);
-		}
         ;
 
 inblock
@@ -327,9 +366,10 @@ proc_call_statement
 			fname.type = PROC_NAME;
 			strcpy(fname.vname, $1);
 			fname.val = arity;
-			arity = 0;
-			Factor *args = getArgs();
+			printf("call @%s, arity=%d\n------------------\n", $1, arity);
+			// Factor *args = getArgs(arity);
 			generateCall(VOID, fname, args);
+			arity = 0;
 		}
         ;
 
@@ -455,27 +495,50 @@ var_name
 arg_list
         : expression
 		{
-			arity++;
+			Factor f = factorpop();
+			args[arity++] = f;
+			factorpush(f);
 		}
         | arg_list COMMA expression
 		{
-			arity++;
+			Factor f = factorpop();
+			args[arity++] = f;
+			factorpush(f);
 		}
         ;
 
 id_list
         : IDENT
 		{
-			insert($1, flag);
-			if (flag == LOCAL_VAR) {
-				generateCode(Alloca);
+			if (is_args) {
+				Factor f;
+				f.type = LOCAL_VAR;
+				strcpy(f.vname, $1);
+				f.val = cntr++;
+				args[arity++] = f;
+				factorpush(f);
+			} else {
+				insert($1, flag, cntr);
+				if (flag == LOCAL_VAR) {
+					generateCode(Alloca);
+				}
 			}
+			
 		}
         | id_list COMMA IDENT
 		{
-			insert($3, flag);
-			if (flag == LOCAL_VAR) {
-				generateCode(Alloca);
+			if (is_args) {
+				Factor f;
+				f.type = LOCAL_VAR;
+				strcpy(f.vname, $3);
+				f.val = cntr++;
+				args[arity++] = f;
+				factorpush(f);
+			} else {
+				insert($3, flag, cntr);
+				if (flag == LOCAL_VAR) {
+					generateCode(Alloca);
+				}
 			}
 		}
         ;
