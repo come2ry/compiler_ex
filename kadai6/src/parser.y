@@ -18,6 +18,7 @@ extern int cntr;
 Scope flag = GLOBAL_VAR;
 char *fname = "result.ll";
 FILE *fp;
+int arity = 0;
 
 %}
 
@@ -325,22 +326,16 @@ proc_call_statement
 			Factor fname;
 			fname.type = PROC_NAME;
 			strcpy(fname.vname, $1);
-			fname.val = 0;
+			fname.val = arity;
+			arity = 0;
 			Factor *args = getArgs();
 			generateCall(VOID, fname, args);
 		}
         ;
 
-proc_call_name
-        : IDENT
-		{
-			// Factor fname;
-			// fname.type = PROC_NAME;
-			// strcpy(fname.vname, $1);
-			// fname.val = 0;
-			// factorpush(fname);
-		}
-        ;
+// proc_call_name
+//         : IDENT
+//         ;
 
 block_statement
         : SBEGIN statement_list SEND
@@ -459,7 +454,13 @@ var_name
 
 arg_list
         : expression
+		{
+			arity++;
+		}
         | arg_list COMMA expression
+		{
+			arity++;
+		}
         ;
 
 id_list

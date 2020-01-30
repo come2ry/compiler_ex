@@ -433,25 +433,29 @@ void displayLlvmcodes( LLVMcode *code ){
             displayFactor( (code->args).call.fname );
             int arity = (code->args).call.fname.val;
             if (arity > 0) {
+                fprintf(fp, "(");
                 if (strcmp((code->args).call.fname.vname, "scanf") == 0) {
-                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0)");
+                    fprintf(fp, "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0), ");
                 } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
-                    fprintf(fp, "(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i32 0, i32 0)");
+                    fprintf(fp, "i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str2, i32 0, i32 0), ");
                 } else {
-                    fprintf(fp, "(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0)");
+                    fprintf(fp, "i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str1, i32 0, i32 0), ");
                 }
 
                 int i;
                 for (i = 0; i < arity; i++) {
                     if (strcmp((code->args).call.fname.vname, "scanf") == 0) {
-                        fprintf(fp, ", i32* ");
+                        fprintf(fp, "i32* ");
                     } else if (strcmp((code->args).call.fname.vname, "printf") == 0) {
-                        fprintf(fp, ", i32 ");
+                        fprintf(fp, "i32 ");
                     } else {
-                        fprintf(fp, ", i32 ");
+                        fprintf(fp, "i32 ");
                     }
 
                     displayFactor( (code->args).call.args[i] );
+                    if (i != arity-1) {
+                        fprintf(fp, ", ");
+                    }
                 }
             } else {
                 fprintf(fp, "(");
@@ -540,7 +544,7 @@ Factor *getArgs() {
     int arity = 0;
     while (fstack.top != 0) {
         Factor f = factorpop();
-        args[fstack.top-1] = f;
+        args[fstack.top] = f;
         arity++;
 
         switch( f.type ){
@@ -560,8 +564,8 @@ Factor *getArgs() {
                 break;
         }
     }
-    printf("arity: %d\n", arity);
-    printf("\n----------------\n");
+    printf("\narity: %d\n", arity);
+    printf("----------------\n");
 
     return &args;
 }
