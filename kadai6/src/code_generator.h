@@ -194,5 +194,6 @@ Factor generateFactor(char *name);
 void displayGlobalVar();
 void insertCode(LLVMcode *tmp);
 // void displayfstack();
+Factor *getArgs();
 
 #endif

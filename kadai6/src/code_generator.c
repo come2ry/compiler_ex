@@ -452,7 +452,6 @@ void displayLlvmcodes( LLVMcode *code ){
                     }
 
                     displayFactor( (code->args).call.args[i] );
-                    printf("%d",(code->args).call.args[i].type);
                 }
             } else {
                 fprintf(fp, "(");
@@ -481,7 +480,6 @@ void displayLlvmfundecl( Fundecl *decl ){
 
     return;
 }
-
 
 
 void insertDecl(char *fname, unsigned arity, Factor *args)
@@ -533,4 +531,33 @@ void displayGlobalVar(){
     }
 
     fprintf(fp, "\n");
+}
+
+Factor *getArgs() {
+    Factor args[10] = {};
+    printf("getArg\n");
+
+    while (fstack.top != 0) {
+        Factor f = factorpop();
+        args[fstack.top] = f;
+
+        switch( f.type ){
+            case GLOBAL_VAR:
+                printf("@%s", f.vname );
+                break;
+            case LOCAL_VAR:
+                printf("%%%d", f.val );
+                break;
+            case CONSTANT:
+                printf("%d", f.val );
+                break;
+            case PROC_NAME:
+                printf("@%s", f.vname );
+                break;
+            default:
+                break;
+        }
+    }
+    printf("\n----------------\n");
+    return &args;
 }

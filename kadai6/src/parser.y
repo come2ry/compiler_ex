@@ -134,6 +134,7 @@ proc_decl
 			factorpush(f);
 			generateCode(Ret);
 		}
+		| PROCEDURE proc_name LPAREN id_list RPAREN SEMICOLON inblock
         ;
 
 proc_name
@@ -310,11 +311,7 @@ for_statement
         ;
 
 proc_call_statement
-        : proc_call_name
-        ;
-
-proc_call_name
-        : IDENT
+		: IDENT 
 		{
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -322,6 +319,26 @@ proc_call_name
 			fname.val = 0;
 			Factor args[10] = {};
 			generateCall(VOID, fname, args);
+		}
+    	| IDENT LPAREN arg_list RPAREN
+		{
+			Factor fname;
+			fname.type = PROC_NAME;
+			strcpy(fname.vname, $1);
+			fname.val = 0;
+			Factor *args = getArgs();
+			generateCall(VOID, fname, args);
+		}
+        ;
+
+proc_call_name
+        : IDENT
+		{
+			// Factor fname;
+			// fname.type = PROC_NAME;
+			// strcpy(fname.vname, $1);
+			// fname.val = 0;
+			// factorpush(fname);
 		}
         ;
 
@@ -440,10 +457,10 @@ var_name
 		}
         ;
 
-// arg_list
-//         : expression
-//         | arg_list COMMA expression
-//         ;
+arg_list
+        : expression
+        | arg_list COMMA expression
+        ;
 
 id_list
         : IDENT
