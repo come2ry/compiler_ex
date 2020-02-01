@@ -154,7 +154,7 @@ proc_decl
 		{
 			is_args = 0;
 		}
-		SEMICOLON 
+		SEMICOLON
 		{
 			insert($2, PROC_NAME, cntr);
 			insertDecl($2, arity, args);
@@ -351,7 +351,7 @@ for_statement
         ;
 
 proc_call_statement
-		: IDENT 
+		: IDENT
 		{
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -360,7 +360,7 @@ proc_call_statement
 			Factor args[10] = {};
 			generateCall(VOID, fname, args);
 		}
-    	| IDENT LPAREN arg_list RPAREN
+		| IDENT LPAREN arg_list RPAREN
 		{
 			Factor fname;
 			fname.type = PROC_NAME;
@@ -523,7 +523,7 @@ id_list
 					generateCode(Alloca);
 				}
 			}
-			
+
 		}
         | id_list COMMA IDENT
 		{

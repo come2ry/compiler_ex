@@ -1,12 +1,12 @@
-program test;
-var i, r;
-procedure
-twice(n);
+program TEST;
+var n, m;
+procedure twoprint(n, m);
 begin
-   r := n + n;
+   write(n);
+   write(m)
 end;
 begin
-   i := 2;
-   twice(i);
-   write(r);
+   read(n);
+   read(m);
+   twoprint(n, m);
 end.
