@@ -1,4 +1,4 @@
-program PL0A;
+plprogram PL0A;
 var n, sum;
 begin
     n := 10;
