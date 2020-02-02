@@ -191,7 +191,7 @@ inblock
 
 statement_list
         : statement_list SEMICOLON statement
-        | statement
+        | statementqw2e
         ;
 
 statement
@@ -367,7 +367,6 @@ proc_call_statement
 			strcpy(fname.vname, $1);
 			fname.val = arity;
 			printf("call @%s, arity=%d\n------------------\n", $1, arity);
-			// Factor *args = getArgs(arity);
 			generateCall(VOID, fname, args);
 			arity = 0;
 		}
