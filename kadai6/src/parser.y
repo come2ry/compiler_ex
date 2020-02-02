@@ -191,7 +191,7 @@ inblock
 
 statement_list
         : statement_list SEMICOLON statement
-        | statementqw2e
+        | statement
         ;
 
 statement
