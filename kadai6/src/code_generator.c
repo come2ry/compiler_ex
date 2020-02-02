@@ -182,48 +182,68 @@ void generateCode(LLVMcommand command) {
             // %8 = add nsw i32 %6, %7
             arg2 = factorpop();
             arg1 = factorpop();
-            retval.type = LOCAL_VAR;
-            retval.val = cntr++;
-            (tmp->args).add.arg1 = arg1;
-            (tmp->args).add.arg2 = arg2;
-            (tmp->args).add.retval = retval;
-            insertCode(tmp);
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                retval.type = LOCAL_VAR;
+                retval.val = cntr++;
+                (tmp->args).add.arg1 = arg1;
+                (tmp->args).add.arg2 = arg2;
+                (tmp->args).add.retval = retval;
+                insertCode(tmp);
+            } else {
+                retval.type = CONSTANT;
+                retval.val = arg1.val + arg2.val;
+            }
             factorpush( retval );
             break;
         case Sub:
             // %10 = sub nsw i32 %9, 1
             arg2 = factorpop();
             arg1 = factorpop();
-            retval.type = LOCAL_VAR;
-            retval.val = cntr++;
-            (tmp->args).sub.arg1 = arg1;
-            (tmp->args).sub.arg2 = arg2;
-            (tmp->args).sub.retval = retval;
-            insertCode(tmp);
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                retval.type = LOCAL_VAR;
+                retval.val = cntr++;
+                (tmp->args).sub.arg1 = arg1;
+                (tmp->args).sub.arg2 = arg2;
+                (tmp->args).sub.retval = retval;
+                insertCode(tmp);
+            } else {
+                retval.type = CONSTANT;
+                retval.val = arg1.val - arg2.val;
+            }
             factorpush( retval );
             break;
         case Mult:
             // %3 = mul nsw i32 %2, 2
             arg2 = factorpop();
             arg1 = factorpop();
-            retval.type = LOCAL_VAR;
-            retval.val = cntr++;
-            (tmp->args).mult.arg1 = arg1;
-            (tmp->args).mult.arg2 = arg2;
-            (tmp->args).mult.retval = retval;
-            insertCode(tmp);
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                retval.type = LOCAL_VAR;
+                retval.val = cntr++;
+                (tmp->args).mult.arg1 = arg1;
+                (tmp->args).mult.arg2 = arg2;
+                (tmp->args).mult.retval = retval;
+                insertCode(tmp);
+            } else {
+                retval.type = CONSTANT;
+                retval.val = arg1.val * arg2.val;
+            }
             factorpush( retval );
             break;
         case Div:
             // %10 = add nsw i32 %9, -1
             arg2 = factorpop();
             arg1 = factorpop();
-            retval.type = LOCAL_VAR;
-            retval.val = cntr++;
-            (tmp->args).div.arg1 = arg1;
-            (tmp->args).div.arg2 = arg2;
-            (tmp->args).div.retval = retval;
-            insertCode(tmp);
+            if (arg1.type != CONSTANT || arg2.type != CONSTANT) {
+                retval.type = LOCAL_VAR;
+                retval.val = cntr++;
+                (tmp->args).div.arg1 = arg1;
+                (tmp->args).div.arg2 = arg2;
+                (tmp->args).div.retval = retval;
+                insertCode(tmp);
+            } else {
+                retval.type = CONSTANT;
+                retval.val = arg1.val / arg2.val;
+            }
             factorpush( retval );
             break;
         case Ret:
